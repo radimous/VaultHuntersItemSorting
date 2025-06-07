@@ -16,7 +16,7 @@ import java.util.Comparator;
 
 import appeng.api.config.SortDir;
 import appeng.api.config.SortOrder;
-import appeng.api.stacks.AEKey;
+import appeng.api.stacks.AEItemKey;
 import appeng.client.gui.me.common.Repo;
 import appeng.menu.me.common.GridInventoryEntry;
 import iskallia.vault.gear.data.AttributeGearData;
@@ -55,8 +55,8 @@ public abstract class MixinRepo
 
         cir.setReturnValue(cir.getReturnValue().thenComparing((left, right) ->
         {
-            AEKey leftWhat = left.getWhat();
-            AEKey rightWhat = right.getWhat();
+            AEItemKey leftWhat = left.getWhat() instanceof AEItemKey itemKey ? itemKey : null;
+            AEItemKey rightWhat = right.getWhat() instanceof AEItemKey itemKey ? itemKey : null;
 
             if (leftWhat == null || rightWhat == null)
             {
@@ -89,8 +89,8 @@ public abstract class MixinRepo
             }
             else if (leftId == ModItems.JEWEL.getRegistryName())
             {
-                CompoundTag leftTag = leftWhat.toTag().getCompound("tag");
-                CompoundTag rightTag = rightWhat.toTag().getCompound("tag");
+                CompoundTag leftTag = leftWhat.getTag();
+                CompoundTag rightTag = rightWhat.getTag();
 
                 if (!leftTag.contains("clientCache") ||
                     !leftTag.getCompound("clientCache").contains(SortingHelper.EXTRA_ATTRIBUTE_INDEX) ||
@@ -173,10 +173,10 @@ public abstract class MixinRepo
             else if (leftId == ModItems.INSCRIPTION.getRegistryName())
             {
                 InscriptionData leftData = InscriptionData.empty();
-                leftData.deserializeNBT(leftWhat.toTag().getCompound("tag").getCompound("data"));
+                leftData.deserializeNBT(leftWhat.getTag().getCompound("data"));
 
                 InscriptionData rightData = InscriptionData.empty();
-                rightData.deserializeNBT(rightWhat.toTag().getCompound("tag").getCompound("data"));
+                rightData.deserializeNBT(rightWhat.getTag().getCompound("data"));
 
                 return switch (sortOrder) {
                     case NAME -> SortingHelper.compareInscriptions(leftName,
@@ -202,10 +202,10 @@ public abstract class MixinRepo
             else if (leftId == ModItems.VAULT_CRYSTAL.getRegistryName())
             {
                 CrystalData leftData = CrystalData.empty();
-                leftData.readNbt(leftWhat.toTag().getCompound("tag").getCompound("CrystalData"));
+                leftData.readNbt(leftWhat.getTag().getCompound("CrystalData"));
 
                 CrystalData rightData = CrystalData.empty();
-                rightData.readNbt(rightWhat.toTag().getCompound("tag").getCompound("CrystalData"));
+                rightData.readNbt(rightWhat.getTag().getCompound("CrystalData"));
 
                 return switch (sortOrder) {
                     case NAME -> SortingHelper.compareVaultCrystals(leftName,
@@ -230,64 +230,64 @@ public abstract class MixinRepo
             }
             else if (leftId == ModItems.TRINKET.getRegistryName())
             {
-                AttributeGearData leftData = CustomVaultGearData.read(leftWhat.toTag().getCompound("tag"));
-                AttributeGearData rightData = CustomVaultGearData.read(rightWhat.toTag().getCompound("tag"));
+                AttributeGearData leftData = CustomVaultGearData.read(leftWhat.getTag());
+                AttributeGearData rightData = CustomVaultGearData.read(rightWhat.getTag());
 
                 return switch (sortOrder) {
                     case NAME -> SortingHelper.compareTrinkets(leftName,
                         leftData,
-                        leftWhat.toTag().getCompound("tag"),
+                        leftWhat.getTag(),
                         rightName,
                         rightData,
-                        rightWhat.toTag().getCompound("tag"),
+                        rightWhat.getTag(),
                         VaultJewelSorting.CONFIGURATION.getTrinketSortingByName(),
                         ascending);
                     case AMOUNT -> SortingHelper.compareTrinkets(leftName,
                         leftData,
-                        leftWhat.toTag().getCompound("tag"),
+                        leftWhat.getTag(),
                         rightName,
                         rightData,
-                        rightWhat.toTag().getCompound("tag"),
+                        rightWhat.getTag(),
                         VaultJewelSorting.CONFIGURATION.getTrinketSortingByAmount(),
                         ascending);
                     case MOD -> SortingHelper.compareTrinkets(leftName,
                         leftData,
-                        leftWhat.toTag().getCompound("tag"),
+                        leftWhat.getTag(),
                         rightName,
                         rightData,
-                        rightWhat.toTag().getCompound("tag"),
+                        rightWhat.getTag(),
                         VaultJewelSorting.CONFIGURATION.getTrinketSortingByMod(),
                         ascending);
                 };
             }
             else if (SortingHelper.VAULT_CHARMS.contains(leftId))
             {
-                AttributeGearData leftData = CustomVaultGearData.read(leftWhat.toTag().getCompound("tag"));
-                AttributeGearData rightData = CustomVaultGearData.read(rightWhat.toTag().getCompound("tag"));
+                AttributeGearData leftData = CustomVaultGearData.read(leftWhat.getTag());
+                AttributeGearData rightData = CustomVaultGearData.read(rightWhat.getTag());
 
                 return switch (sortOrder) {
                     case NAME -> SortingHelper.compareCharms(leftName,
                         leftData,
-                        leftWhat.toTag().getCompound("tag"),
+                        leftWhat.getTag(),
                         rightName,
                         rightData,
-                        rightWhat.toTag().getCompound("tag"),
+                        rightWhat.getTag(),
                         VaultJewelSorting.CONFIGURATION.getCharmSortingByName(),
                         ascending);
                     case AMOUNT -> SortingHelper.compareCharms(leftName,
                         leftData,
-                        leftWhat.toTag().getCompound("tag"),
+                        leftWhat.getTag(),
                         rightName,
                         rightData,
-                        rightWhat.toTag().getCompound("tag"),
+                        rightWhat.getTag(),
                         VaultJewelSorting.CONFIGURATION.getCharmSortingByAmount(),
                         ascending);
                     case MOD -> SortingHelper.compareCharms(leftName,
                         leftData,
-                        leftWhat.toTag().getCompound("tag"),
+                        leftWhat.getTag(),
                         rightName,
                         rightData,
-                        rightWhat.toTag().getCompound("tag"),
+                        rightWhat.getTag(),
                         VaultJewelSorting.CONFIGURATION.getCharmSortingByMod(),
                         ascending);
                 };
@@ -296,21 +296,21 @@ public abstract class MixinRepo
             {
                 return switch (sortOrder) {
                     case NAME -> SortingHelper.compareCatalysts(leftName,
-                        leftWhat.toTag().getCompound("tag"),
+                        leftWhat.getTag(),
                         rightName,
-                        rightWhat.toTag().getCompound("tag"),
+                        rightWhat.getTag(),
                         VaultJewelSorting.CONFIGURATION.getCatalystSortingByName(),
                         ascending);
                     case AMOUNT -> SortingHelper.compareCatalysts(leftName,
-                        leftWhat.toTag().getCompound("tag"),
+                        leftWhat.getTag(),
                         rightName,
-                        rightWhat.toTag().getCompound("tag"),
+                        rightWhat.getTag(),
                         VaultJewelSorting.CONFIGURATION.getCatalystSortingByAmount(),
                         ascending);
                     case MOD -> SortingHelper.compareCatalysts(leftName,
-                        leftWhat.toTag().getCompound("tag"),
+                        leftWhat.getTag(),
                         rightName,
-                        rightWhat.toTag().getCompound("tag"),
+                        rightWhat.getTag(),
                         VaultJewelSorting.CONFIGURATION.getCatalystSortingByMod(),
                         ascending);
                 };
@@ -319,21 +319,21 @@ public abstract class MixinRepo
             {
                 return switch (sortOrder) {
                     case NAME -> SortingHelper.compareVaultDolls(leftName,
-                        leftWhat.toTag().getCompound("tag"),
+                        leftWhat.getTag(),
                         rightName,
-                        rightWhat.toTag().getCompound("tag"),
+                        rightWhat.getTag(),
                         VaultJewelSorting.CONFIGURATION.getDollSortingByName(),
                         ascending);
                     case AMOUNT -> SortingHelper.compareVaultDolls(leftName,
-                        leftWhat.toTag().getCompound("tag"),
+                        leftWhat.getTag(),
                         rightName,
-                        rightWhat.toTag().getCompound("tag"),
+                        rightWhat.getTag(),
                         VaultJewelSorting.CONFIGURATION.getDollSortingByAmount(),
                         ascending);
                     case MOD -> SortingHelper.compareVaultDolls(leftName,
-                        leftWhat.toTag().getCompound("tag"),
+                        leftWhat.getTag(),
                         rightName,
-                        rightWhat.toTag().getCompound("tag"),
+                        rightWhat.getTag(),
                         VaultJewelSorting.CONFIGURATION.getDollSortingByMod(),
                         ascending);
                 };
@@ -341,50 +341,50 @@ public abstract class MixinRepo
             else if (leftId == ModItems.RELIC_FRAGMENT.getRegistryName())
             {
                 return SortingHelper.compareRelicFragments(
-                    leftWhat.toTag().getCompound("tag"),
-                    rightWhat.toTag().getCompound("tag"),
+                    leftWhat.getTag(),
+                    rightWhat.getTag(),
                     ascending);
             }
             else if (leftId == ModItems.RESPEC_FLASK.getRegistryName())
             {
                 return SortingHelper.compareRespecFlasks(
-                    leftWhat.toTag().getCompound("tag"),
-                    rightWhat.toTag().getCompound("tag"),
+                    leftWhat.getTag(),
+                    rightWhat.getTag(),
                     ascending);
             }
             else if (leftId == ModItems.FACETED_FOCUS.getRegistryName())
             {
                 return SortingHelper.compareFacedFocus(
-                    leftWhat.toTag().getCompound("tag"),
-                    rightWhat.toTag().getCompound("tag"),
+                    leftWhat.getTag(),
+                    rightWhat.getTag(),
                     ascending);
             }
             else if (leftId == ModItems.AUGMENT.getRegistryName())
             {
                 return SortingHelper.compareAugments(
-                    leftWhat.toTag().getCompound("tag"),
-                    rightWhat.toTag().getCompound("tag"),
+                    leftWhat.getTag(),
+                    rightWhat.getTag(),
                     ascending);
             }
             else if (leftId == ModItems.CARD.getRegistryName())
             {
                 return switch (sortOrder) {
                     case NAME -> SortingHelper.compareCards(leftName,
-                        leftWhat.toTag().getCompound("tag"),
+                        leftWhat.getTag(),
                         rightName,
-                        rightWhat.toTag().getCompound("tag"),
+                        rightWhat.getTag(),
                         VaultJewelSorting.CONFIGURATION.getCardSortingByName(),
                         ascending);
                     case AMOUNT -> SortingHelper.compareCards(leftName,
-                        leftWhat.toTag().getCompound("tag"),
+                        leftWhat.getTag(),
                         rightName,
-                        rightWhat.toTag().getCompound("tag"),
+                        rightWhat.getTag(),
                         VaultJewelSorting.CONFIGURATION.getCardSortingByAmount(),
                         ascending);
                     case MOD -> SortingHelper.compareCards(leftName,
-                        leftWhat.toTag().getCompound("tag"),
+                        leftWhat.getTag(),
                         rightName,
-                        rightWhat.toTag().getCompound("tag"),
+                        rightWhat.getTag(),
                         VaultJewelSorting.CONFIGURATION.getCardSortingByMod(),
                         ascending);
                 };
@@ -392,35 +392,35 @@ public abstract class MixinRepo
             else if (leftId == ModItems.CARD_DECK.getRegistryName())
             {
                 return SortingHelper.compareDecks(
-                    leftWhat.toTag().getCompound("tag"),
-                    rightWhat.toTag().getCompound("tag"),
+                    leftWhat.getTag(),
+                    rightWhat.getTag(),
                     ascending);
             }
             else if (leftId == ModItems.BOOSTER_PACK.getRegistryName())
             {
                 return SortingHelper.compareBoosterPacks(
-                    leftWhat.toTag().getCompound("tag"),
-                    rightWhat.toTag().getCompound("tag"),
+                    leftWhat.getTag(),
+                    rightWhat.getTag(),
                     ascending);
             }
             else if (leftId == ModItems.ANTIQUE.getRegistryName())
             {
                 return SortingHelper.compareAntique(
-                    leftWhat.toTag().getCompound("tag"),
-                    rightWhat.toTag().getCompound("tag"),
+                    leftWhat.getTag(),
+                    rightWhat.getTag(),
                     ascending);
             }
             else if (leftId == ModItems.JEWEL_POUCH.getRegistryName())
             {
                 return SortingHelper.comparePouches(
-                    leftWhat.toTag().getCompound("tag"),
-                    rightWhat.toTag().getCompound("tag"),
+                    leftWhat.getTag(),
+                    rightWhat.getTag(),
                     ascending);
             }
             else
             {
-                VaultGearData leftData = CustomVaultGearData.read(leftWhat.toTag().getCompound("tag"));
-                VaultGearData rightData = CustomVaultGearData.read(rightWhat.toTag().getCompound("tag"));
+                VaultGearData leftData = CustomVaultGearData.read(leftWhat.getTag());
+                VaultGearData rightData = CustomVaultGearData.read(rightWhat.getTag());
 
                 return switch (sortOrder) {
                     case NAME -> SortingHelper.compareVaultGear(leftName,
