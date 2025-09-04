@@ -417,6 +417,29 @@ public abstract class MixinRepo
                     rightWhat.getTag(),
                     ascending);
             }
+            else if (leftId == ModItems.COMPANION_RELIC.getRegistryName())
+            {
+                return SortingHelper.compareCompanionRelics(
+                    leftWhat.getTag(),
+                    rightWhat.getTag(),
+                    ascending);
+
+            }
+            else if (leftId == ModItems.COMPANION_PARTICLE_TRAIL.getRegistryName())
+            {
+                return SortingHelper.compareCompanionParticleTrails(
+                    leftWhat.getTag(),
+                    rightWhat.getTag(),
+                    ascending);
+
+            }
+            else if (leftId == ModItems.TEMPORAL_SHARD.getRegistryName())
+            {
+                return SortingHelper.compareTemporalShards(
+                    leftWhat.getTag(),
+                    rightWhat.getTag(),
+                    ascending);
+            }
             else
             {
                 VaultGearData leftData = CustomVaultGearData.read(leftWhat.getTag());

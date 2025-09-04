@@ -7,6 +7,7 @@
 package lv.id.bonne.vaulthunters.jewelsorting.utils;
 
 
+import net.minecraft.nbt.StringTag;
 import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
@@ -735,6 +736,33 @@ public class SortingHelper
                 leftTag.getString(ID),
                 rightTag.getString(ID));
 
+            if (returnValue == 0) {
+                int leftSize = 0;
+                ListTag leftModifiers = leftTag.getCompound("data").getList("modifiers", Tag.TAG_COMPOUND);
+                for (Tag leftModifier : leftModifiers) {
+                    if (leftModifier instanceof CompoundTag modifier) {
+                        String modifierType = modifier.getString("type");
+                        if (!"dummy".equals(modifierType)) { // this is so stupid
+                            leftSize++;
+                        }
+                    }
+                }
+                int rightSize = 0;
+                ListTag rightModifiers = rightTag.getCompound("data").getList("modifiers", Tag.TAG_COMPOUND);
+                for (Tag rightModifier : rightModifiers) {
+                    if (rightModifier instanceof CompoundTag modifier) {
+                        String modifierType = modifier.getString("type");
+                        if (!"dummy".equals(modifierType)) {
+                            rightSize++;
+                        }
+                    }
+                }
+                returnValue = SortingHelper.compareIntegerValue(
+                    leftSize,
+                    rightSize
+
+                );
+            }
             if (returnValue == 0)
             {
                 returnValue = SortingHelper.compareIntegerValue(
@@ -888,6 +916,104 @@ public class SortingHelper
             returnValue = -1;
         }
 
+        return ascending ? returnValue : -returnValue;
+    }
+
+    public static Integer compareCompanionRelics(CompoundTag leftTag, CompoundTag rightTag, boolean ascending) {
+        int returnValue;
+        if (leftTag != null && rightTag != null)
+        {
+            ListTag leftModifiers = leftTag.getList("modifiers", Tag.TAG_STRING);
+            ListTag rightModifiers = rightTag.getList("modifiers", Tag.TAG_STRING);
+
+            returnValue = Integer.compare(leftModifiers.size(), rightModifiers.size());
+            if (returnValue == 0) {
+                ListTag leftSorted = leftModifiers.copy();
+                ListTag rightSorted = rightModifiers.copy();
+                leftSorted.sort((left, right) -> left instanceof StringTag lStr && right instanceof StringTag rStr ? compareString(lStr.getAsString(), rStr.getAsString()) : 0);
+                rightSorted.sort((left, right) -> left instanceof StringTag lStr && right instanceof StringTag rStr ? compareString(lStr.getAsString(), rStr.getAsString()) : 0);
+                returnValue = SortingHelper.compareModifiers(
+                    leftSorted,
+                    rightSorted
+                );
+            }
+
+            if (returnValue == 0) {
+                returnValue = SortingHelper.compareModifiers(
+                    leftModifiers,
+                    rightModifiers
+                );
+            }
+
+            if (returnValue == 0) {
+                returnValue = SortingHelper.compareIntegerValue(
+                    leftTag.getInt("model"),
+                    rightTag.getInt("model")
+                );
+            }
+        }
+        else if (leftTag != null)
+        {
+            returnValue = 1;
+
+        }
+        else
+        {
+            returnValue = -1;
+        }
+
+        return ascending ? returnValue : -returnValue;
+    }
+
+    public static Integer compareCompanionParticleTrails(CompoundTag leftTag, CompoundTag rightTag, boolean ascending) {
+        int returnValue;
+        if (leftTag != null && rightTag != null) {
+            returnValue = SortingHelper.compareIntegerValue(
+                leftTag.getInt("type"),
+                rightTag.getInt("type")
+            );
+
+            if (returnValue == 0) {
+                int leftColor = leftTag.getInt("color");
+                int rightColor = rightTag.getInt("color");
+                returnValue = SortingHelper.compareIntegerValue(leftColor, rightColor);
+            }
+        }
+        else if (leftTag != null)
+        {
+            returnValue = 1;
+
+        }
+        else
+        {
+            returnValue = -1;
+        }
+
+        return ascending ? returnValue : -returnValue;
+    }
+
+    public static Integer compareTemporalShards(CompoundTag leftTag, CompoundTag rightTag, boolean ascending) {
+        int returnValue;
+        if (leftTag != null && rightTag != null) {
+            returnValue = SortingHelper.compareString(
+                leftTag.getString("modifier"),
+                rightTag.getString("modifier"));
+
+            if (returnValue == 0) {
+                returnValue = SortingHelper.compareIntegerValue(
+                    leftTag.getInt("duration"),
+                    rightTag.getInt("duration"));
+            }
+        }
+        else if (leftTag != null)
+        {
+            returnValue = 1;
+
+        }
+        else
+        {
+            returnValue = -1;
+        }
         return ascending ? returnValue : -returnValue;
     }
 
@@ -1490,19 +1616,23 @@ public class SortingHelper
      */
     private static int compareModifiers(ListTag leftList, ListTag rightList)
     {
-        int i = 0;
-        int max = Math.max(leftList.size(), rightList.size());
 
+        int sizeCmp = Integer.compare(leftList.size(), rightList.size());
+        if (sizeCmp != 0) {
+            return sizeCmp;
+        }
+        int i = 0;
         String leftMain = leftList.getString(i);
         String rightMain = rightList.getString(i++);
 
-        while (leftMain.equals(rightMain) && i < max)
+        while (leftMain.equals(rightMain) && i < leftList.size())
         {
             leftMain = leftList.getString(i);
-            rightMain = leftList.getString(i++);
+            rightMain = rightList.getString(i++);
         }
 
         return leftMain.compareTo(rightMain);
+
     }
 
 
@@ -1938,6 +2068,7 @@ public class SortingHelper
 
         VAULT_GEAR_SET.add(ModItems.WAND.getRegistryName());
         VAULT_GEAR_SET.add(ModItems.SHIELD.getRegistryName());
+        VAULT_GEAR_SET.add(ModItems.FOCUS.getRegistryName());
 
         VAULT_GEAR_SET.add(ModItems.MAGNET.getRegistryName());
 
@@ -1946,7 +2077,10 @@ public class SortingHelper
         VAULT_GEAR_SET.add(ModItems.IDOL_TIMEKEEPER.getRegistryName());
         VAULT_GEAR_SET.add(ModItems.IDOL_MALEVOLENCE.getRegistryName());
 
-        VAULT_GEAR_SET.add(ModItems.FOCUS.getRegistryName());
+        VAULT_GEAR_SET.add(ModItems.VOID_STONE.getRegistryName());
+
+        VAULT_GEAR_SET.add(ModItems.VAULT_GOD_CHARM.getRegistryName());
+
 
         VAULT_CHARMS.add(ModItems.SMALL_CHARM.getRegistryName());
         VAULT_CHARMS.add(ModItems.LARGE_CHARM.getRegistryName());
@@ -1971,5 +2105,9 @@ public class SortingHelper
         CUSTOM_SORTING.add(ModItems.ANTIQUE.getRegistryName());
 
         CUSTOM_SORTING.add(ModItems.JEWEL_POUCH.getRegistryName());
+
+        CUSTOM_SORTING.add(ModItems.TEMPORAL_SHARD.getRegistryName());
+        CUSTOM_SORTING.add(ModItems.COMPANION_PARTICLE_TRAIL.getRegistryName());
+        CUSTOM_SORTING.add(ModItems.COMPANION_RELIC.getRegistryName());
     }
 }

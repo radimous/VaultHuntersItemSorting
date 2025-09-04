@@ -24,7 +24,7 @@ import net.minecraft.world.item.ItemStack;
 /**
  * This mixin is used to sort jewels in Simple Storage Network mod.
  */
-@Mixin(targets = "com.tom.storagemod.StoredItemStack$ComparatorName", remap = false)
+@Mixin(value = StoredItemStack.ComparatorName.class, remap = false)
 public class MixinStoredItemStackComparatorName
 {
     @Shadow
