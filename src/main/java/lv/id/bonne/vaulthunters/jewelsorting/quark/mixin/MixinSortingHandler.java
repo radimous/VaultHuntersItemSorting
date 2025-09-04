@@ -7,7 +7,6 @@
 package lv.id.bonne.vaulthunters.jewelsorting.quark.mixin;
 
 
-import com.refinedmods.refinedstorage.screen.grid.sorting.SortingDirection;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -265,6 +264,33 @@ public class MixinSortingHandler
         {
             callbackInfoReturnable.setReturnValue(
                 SortingHelper.comparePouches(stack1.getTag(),
+                    stack2.getTag(),
+                    true));
+
+            callbackInfoReturnable.cancel();
+        }
+        else if (stack1.getItem() == ModItems.COMPANION_RELIC)
+        {
+            callbackInfoReturnable.setReturnValue(
+                SortingHelper.compareCompanionRelics(stack1.getTag(),
+                    stack2.getTag(),
+                    true));
+
+            callbackInfoReturnable.cancel();
+        }
+        else if (stack1.getItem() == ModItems.COMPANION_PARTICLE_TRAIL)
+        {
+            callbackInfoReturnable.setReturnValue(
+                SortingHelper.compareCompanionParticleTrails(stack1.getTag(),
+                    stack2.getTag(),
+                    true));
+
+            callbackInfoReturnable.cancel();
+        }
+        else if (stack1.getItem() == ModItems.TEMPORAL_SHARD)
+        {
+            callbackInfoReturnable.setReturnValue(
+                SortingHelper.compareTemporalShards(stack1.getTag(),
                     stack2.getTag(),
                     true));
 

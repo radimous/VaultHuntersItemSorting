@@ -34,7 +34,7 @@ import net.minecraft.world.item.ItemStack;
 /**
  * This mixin handles custom jewel sorting order for Mekanism QIO.
  */
-@Mixin(targets = "mekanism.common.inventory.container.QIOItemViewerContainer$ListSortType", remap = false)
+@Mixin(value = QIOItemViewerContainer.ListSortType.class, remap = false)
 public class MixinQIOItemViewerContainerListSortType
 {
     /**
@@ -496,6 +496,29 @@ public class MixinQIOItemViewerContainerListSortType
         else if (firstItem.getItem() == ModItems.JEWEL_POUCH)
         {
             return SortingHelper.comparePouches(
+                firstItem.getTag(),
+                secondItem.getTag(),
+                ascending);
+        }
+        else if (firstItem.getItem() == ModItems.COMPANION_RELIC)
+        {
+            return SortingHelper.compareCompanionRelics(
+                firstItem.getTag(),
+                secondItem.getTag(),
+                ascending);
+
+        }
+        else if (firstItem.getItem() == ModItems.COMPANION_PARTICLE_TRAIL)
+        {
+            return SortingHelper.compareCompanionParticleTrails(
+                firstItem.getTag(),
+                secondItem.getTag(),
+                ascending);
+
+        }
+        else if (firstItem.getItem() == ModItems.TEMPORAL_SHARD)
+        {
+            return SortingHelper.compareTemporalShards(
                 firstItem.getTag(),
                 secondItem.getTag(),
                 ascending);

@@ -215,6 +215,30 @@ public class MixinInventorySorter
                         secondStack.getTag(),
                         true);
                 }
+                else if (firstStack.getItem() == ModItems.COMPANION_RELIC)
+                {
+                    return SortingHelper.compareCompanionRelics(
+                        firstStack.getTag(),
+                        secondStack.getTag(),
+                        true);
+
+                }
+                else if (firstStack.getItem() == ModItems.COMPANION_PARTICLE_TRAIL)
+                {
+                    return SortingHelper.compareCompanionParticleTrails(
+                        firstStack.getTag(),
+                        secondStack.getTag(),
+                        true);
+
+                }
+                else if (firstStack.getItem() == ModItems.TEMPORAL_SHARD)
+                {
+                    return SortingHelper.compareTemporalShards(
+                        firstStack.getTag(),
+                        secondStack.getTag(),
+                        true);
+
+                }
 
                 return 0;
             });
@@ -410,6 +434,30 @@ public class MixinInventorySorter
                         firstStack.getTag(),
                         secondStack.getTag(),
                         true);
+                }
+                else if (firstStack.getItem() == ModItems.COMPANION_RELIC)
+                {
+                    return SortingHelper.compareCompanionRelics(
+                        firstStack.getTag(),
+                        secondStack.getTag(),
+                        true);
+
+                }
+                else if (firstStack.getItem() == ModItems.COMPANION_PARTICLE_TRAIL)
+                {
+                    return SortingHelper.compareCompanionParticleTrails(
+                        firstStack.getTag(),
+                        secondStack.getTag(),
+                        true);
+
+                }
+                else if (firstStack.getItem() == ModItems.TEMPORAL_SHARD)
+                {
+                    return SortingHelper.compareTemporalShards(
+                        firstStack.getTag(),
+                        secondStack.getTag(),
+                        true);
+
                 }
 
                 return 0;

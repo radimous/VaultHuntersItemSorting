@@ -285,6 +285,32 @@ public class MixinNameGridSorter
                         rightStack.getTag(),
                         sortingDirection == SortingDirection.ASCENDING));
             }
+            else if (leftStack.getItem() == ModItems.COMPANION_RELIC)
+            {
+                callbackInfoReturnable.setReturnValue(
+                    SortingHelper.compareCompanionRelics(
+                        leftStack.getTag(),
+                        rightStack.getTag(),
+                        sortingDirection == SortingDirection.ASCENDING));
+
+            }
+            else if (leftStack.getItem() == ModItems.COMPANION_PARTICLE_TRAIL)
+            {
+                callbackInfoReturnable.setReturnValue(
+                    SortingHelper.compareCompanionParticleTrails(
+                        leftStack.getTag(),
+                        rightStack.getTag(),
+                        sortingDirection == SortingDirection.ASCENDING));
+
+            }
+            else if (leftStack.getItem() == ModItems.TEMPORAL_SHARD)
+            {
+                callbackInfoReturnable.setReturnValue( SortingHelper.compareTemporalShards(
+                    leftStack.getTag(),
+                    rightStack.getTag(),
+                    sortingDirection == SortingDirection.ASCENDING));
+
+            }
         }
     }
 }

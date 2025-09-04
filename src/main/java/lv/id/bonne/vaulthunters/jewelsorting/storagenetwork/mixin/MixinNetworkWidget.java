@@ -348,7 +348,18 @@ public class MixinNetworkWidget
             {
                 return SortingHelper.comparePouches(first.getTag(), second.getTag(), true);
             }
-
+            else if (first.getItem() == ModItems.COMPANION_RELIC)
+            {
+                return SortingHelper.compareCompanionRelics(first.getTag(), second.getTag(), true);
+            }
+            else if (first.getItem() == ModItems.COMPANION_PARTICLE_TRAIL)
+            {
+                return SortingHelper.compareCompanionParticleTrails(first.getTag(), second.getTag(), true);
+            }
+            else if (first.getItem() == ModItems.TEMPORAL_SHARD)
+            {
+                return SortingHelper.compareTemporalShards(first.getTag(), second.getTag(), true);
+            }
             return 0;
         });
     }
