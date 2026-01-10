@@ -296,5 +296,15 @@ public class MixinSortingHandler
 
             callbackInfoReturnable.cancel();
         }
+        else if (stack1.getItem() == ModItems.DECK_SOCKET)
+        {
+            callbackInfoReturnable.setReturnValue(
+                SortingHelper.compareDeckSockets(stack1.getTag(),
+                    stack2.getTag(),
+                    true));
+
+            callbackInfoReturnable.cancel();
+        }
+        //TODO:REFACTOR3[TAG]
     }
 }

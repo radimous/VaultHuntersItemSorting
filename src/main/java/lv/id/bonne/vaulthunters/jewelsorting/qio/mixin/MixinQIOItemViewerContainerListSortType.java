@@ -523,6 +523,14 @@ public class MixinQIOItemViewerContainerListSortType
                 secondItem.getTag(),
                 ascending);
         }
+        else if (firstItem.getItem() == ModItems.DECK_SOCKET)
+        {
+            return SortingHelper.compareDeckSockets(
+                firstItem.getTag(),
+                secondItem.getTag(),
+                ascending);
+        }
+        //TODO:REFACTOR2[TAG]
         else
         {
             return 0;
