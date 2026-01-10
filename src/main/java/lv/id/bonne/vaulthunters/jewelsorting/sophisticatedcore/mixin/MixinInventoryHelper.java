@@ -188,8 +188,14 @@ public class MixinInventoryHelper {
                         secondStack.getTag(),
                         true);
 
+                } else if (firstStack.getItem() == ModItems.DECK_SOCKET) {
+                    return SortingHelper.compareDeckSockets(
+                        firstStack.getTag(),
+                        secondStack.getTag(),
+                        true);
                 }
 
+                //TODO:REFACTOR7[TAG]
                 return 0;
             });
     }

@@ -360,6 +360,11 @@ public class MixinNetworkWidget
             {
                 return SortingHelper.compareTemporalShards(first.getTag(), second.getTag(), true);
             }
+            else if (first.getItem() == ModItems.DECK_SOCKET)
+            {
+                return SortingHelper.compareDeckSockets(first.getTag(), second.getTag(), true);
+            }
+            //TODO:REFACTOR10[TAG]
             return 0;
         });
     }

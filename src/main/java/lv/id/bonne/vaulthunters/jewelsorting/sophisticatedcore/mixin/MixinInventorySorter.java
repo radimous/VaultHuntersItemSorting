@@ -239,6 +239,15 @@ public class MixinInventorySorter
                         true);
 
                 }
+                else if (firstStack.getItem() == ModItems.DECK_SOCKET)
+                {
+                    return SortingHelper.compareDeckSockets(
+                        firstStack.getTag(),
+                        secondStack.getTag(),
+                        true);
+
+                }
+                //TODO:REFACTOR8[TAG]
 
                 return 0;
             });
@@ -459,7 +468,15 @@ public class MixinInventorySorter
                         true);
 
                 }
+                else if (firstStack.getItem() == ModItems.DECK_SOCKET)
+                {
+                    return SortingHelper.compareDeckSockets(
+                        firstStack.getTag(),
+                        secondStack.getTag(),
+                        true);
 
+                }
+                //TODO:REFACTOR9
                 return 0;
             });
         }
