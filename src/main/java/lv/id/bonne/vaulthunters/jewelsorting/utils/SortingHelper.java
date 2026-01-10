@@ -1017,6 +1017,38 @@ public class SortingHelper
         return ascending ? returnValue : -returnValue;
     }
 
+    public static Integer compareDeckSockets(CompoundTag leftTag, CompoundTag rightTag, boolean ascending) {
+        int returnValue;
+        if (leftTag != null && rightTag != null) {
+            var leftModifier = leftTag.getCompound("DeckModifier");
+            var rightModifier = rightTag.getCompound("DeckModifier");
+            returnValue = SortingHelper.compareString(
+                leftModifier.getString("type"),
+                rightModifier.getString("type"));
+
+            if (returnValue == 0) {
+                returnValue = SortingHelper.compareString(
+                    leftModifier.getString("id"),
+                    rightModifier.getString("id"));
+            }
+            if (returnValue == 0) {
+                returnValue = Float.compare(
+                    leftModifier.getFloat("modifier_value"),
+                    rightModifier.getFloat("modifier_value"));
+            }
+        }
+
+        else if (leftTag != null)
+        {
+            returnValue = 1;
+        }
+        else
+        {
+            returnValue = -1;
+        }
+        return ascending ? returnValue : -returnValue;
+    }
+
 
 // ---------------------------------------------------------------------
 // Section: Internal Sorting Methods
@@ -2109,5 +2141,7 @@ public class SortingHelper
         CUSTOM_SORTING.add(ModItems.TEMPORAL_SHARD.getRegistryName());
         CUSTOM_SORTING.add(ModItems.COMPANION_PARTICLE_TRAIL.getRegistryName());
         CUSTOM_SORTING.add(ModItems.COMPANION_RELIC.getRegistryName());
+
+        CUSTOM_SORTING.add(ModItems.DECK_SOCKET.getRegistryName());
     }
 }

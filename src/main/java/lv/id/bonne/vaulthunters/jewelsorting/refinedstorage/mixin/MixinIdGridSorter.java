@@ -311,6 +311,15 @@ public class MixinIdGridSorter
                     sortingDirection == SortingDirection.ASCENDING));
 
             }
+            else if (leftStack.getItem() == ModItems.DECK_SOCKET)
+            {
+                callbackInfoReturnable.setReturnValue( SortingHelper.compareDeckSockets(
+                    leftStack.getTag(),
+                    rightStack.getTag(),
+                    sortingDirection == SortingDirection.ASCENDING));
+
+            }
+            //TODO:REFACTOR4[TAG]
         }
     }
 }

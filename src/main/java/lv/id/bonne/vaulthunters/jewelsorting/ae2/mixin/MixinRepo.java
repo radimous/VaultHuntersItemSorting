@@ -440,6 +440,14 @@ public abstract class MixinRepo
                     rightWhat.getTag(),
                     ascending);
             }
+            else if (leftId == ModItems.DECK_SOCKET.getRegistryName())
+            {
+                return SortingHelper.compareDeckSockets(
+                    leftWhat.getTag(),
+                    rightWhat.getTag(),
+                    ascending);
+            }
+            //TODO:REFACTOR1[TAG]
             else
             {
                 VaultGearData leftData = CustomVaultGearData.read(leftWhat.getTag());

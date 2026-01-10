@@ -317,6 +317,15 @@ public class MixinQuantityGridSorter
                     sortingDirection == SortingDirection.ASCENDING));
 
             }
+            else if (leftStack.getItem() == ModItems.DECK_SOCKET)
+            {
+                callbackInfoReturnable.setReturnValue( SortingHelper.compareTemporalShards(
+                    leftStack.getTag(),
+                    rightStack.getTag(),
+                    sortingDirection == SortingDirection.ASCENDING));
+
+            }
+            //TODO:REFACTOR6[TAG]
         }
     }
 }
