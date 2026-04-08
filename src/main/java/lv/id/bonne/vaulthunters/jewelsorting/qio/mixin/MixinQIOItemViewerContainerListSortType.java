@@ -97,7 +97,7 @@ public class MixinQIOItemViewerContainerListSortType
                     case SIZE -> Configuration.SortBy.AMOUNT;
                     case MOD -> Configuration.SortBy.MOD;
                 };
-                Integer cmpRv = SortingHelper.compareItems(leftStack, rightStack, sortBy, true);
+                Integer cmpRv = SortingHelper.compareItems(leftStack, rightStack,stack1.getDisplayName(), stack2.getDisplayName(), sortBy, true);
                 return cmpRv == null ? 0 : cmpRv;
             }
         });
@@ -147,7 +147,7 @@ public class MixinQIOItemViewerContainerListSortType
                     case SIZE -> Configuration.SortBy.AMOUNT;
                     case MOD -> Configuration.SortBy.MOD;
                 };
-                Integer cmpRv = SortingHelper.compareItems(leftStack, rightStack, sortBy, false);
+                Integer cmpRv = SortingHelper.compareItems(leftStack, rightStack, stack1.getDisplayName(), stack2.getDisplayName(), sortBy, false);
                 return cmpRv == null ? 0 : cmpRv;
             }
         });

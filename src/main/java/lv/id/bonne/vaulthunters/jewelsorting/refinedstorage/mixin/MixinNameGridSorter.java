@@ -75,6 +75,8 @@ public class MixinNameGridSorter
             Integer cmpRv = SortingHelper.compareItems(
                 leftStack,
                 rightStack,
+                left.getName(),
+                right.getName(),
                 Configuration.SortBy.NAME,
                 sortingDirection == SortingDirection.ASCENDING);
             if (cmpRv != null) {

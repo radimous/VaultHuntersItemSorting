@@ -58,6 +58,20 @@ public class SortingHelper
     public static @Nullable Integer compareItems(ItemStack leftStack,
                                                  ItemStack rightStack,
                                                  Configuration.SortBy sortBy,
+                                                 boolean ascending) {
+    return compareItems(leftStack,
+        rightStack,
+        leftStack.getDisplayName().getString(),
+        rightStack.getDisplayName().getString(),
+        sortBy,
+        ascending);
+    }
+
+    public static @Nullable Integer compareItems(ItemStack leftStack,
+                                                 ItemStack rightStack,
+                                                 String leftName,
+                                                 String rightName,
+                                                 Configuration.SortBy sortBy,
                                                  boolean ascending)
     {
 
@@ -83,22 +97,18 @@ public class SortingHelper
             }
             if (((IExtraGearDataCache) rightData).isInvalidCache() || ((IExtraGearDataCache) leftData).isInvalidCache()) {
                 // If cache is still invalid, then fallback to slower VaultGearData comparison.
-                return SortingHelper.compareJewels(leftStack.getDisplayName().getString(),
+                return SortingHelper.compareJewels(leftName,
                     VaultGearData.read(leftStack),
-                    leftStack.getOrCreateTag().getInt("freeCuts"),
-                    rightStack.getDisplayName().getString(),
+                    rightName,
                     VaultGearData.read(rightStack),
-                    rightStack.getOrCreateTag().getInt("freeCuts"),
                     sortBy,
                     ascending);
             }
 
-            return SortingHelper.compareJewels(leftStack.getDisplayName().getString(),
+            return SortingHelper.compareJewels(leftName,
                 leftData,
-                leftStack.getOrCreateTag().getInt("freeCuts"),
-                rightStack.getDisplayName().getString(),
+                rightName,
                 rightData,
-                rightStack.getOrCreateTag().getInt("freeCuts"),
                 sortBy,
                 ascending);
         }
@@ -109,37 +119,37 @@ public class SortingHelper
         }
         else if (SortingHelper.VAULT_GEAR_SET.contains(leftStack.getItem().getRegistryName()))
         {
-            return SortingHelper.compareVaultGear(leftStack.getDisplayName().getString(),
+            return SortingHelper.compareVaultGear(leftName,
                 VaultGearData.read(leftStack),
-                rightStack.getDisplayName().getString(),
+                rightName,
                 VaultGearData.read(rightStack),
                 sortBy,
                 ascending);
         }
         else if (leftStack.getItem() == ModItems.INSCRIPTION)
         {
-            return SortingHelper.compareInscriptions(leftStack.getDisplayName().getString(),
+            return SortingHelper.compareInscriptions(leftName,
                 InscriptionData.from(leftStack),
-                rightStack.getDisplayName().getString(),
+                rightName,
                 InscriptionData.from(rightStack),
                 sortBy,
                 ascending);
         }
         else if (leftStack.getItem() == ModItems.VAULT_CRYSTAL)
         {
-            return SortingHelper.compareVaultCrystals(leftStack.getDisplayName().getString(),
+            return SortingHelper.compareVaultCrystals(leftName,
                 CrystalData.read(leftStack),
-                rightStack.getDisplayName().getString(),
+                rightName,
                 CrystalData.read(rightStack),
                 sortBy,
                 ascending);
         }
         else if (leftStack.getItem() == ModItems.TRINKET)
         {
-            return SortingHelper.compareTrinkets(leftStack.getDisplayName().getString(),
+            return SortingHelper.compareTrinkets(leftName,
                 AttributeGearData.read(leftStack),
                 leftStack.getTag(),
-                rightStack.getDisplayName().getString(),
+                rightName,
                 AttributeGearData.read(rightStack),
                 rightStack.getTag(),
                 sortBy,
@@ -147,10 +157,10 @@ public class SortingHelper
         }
         else if (SortingHelper.VAULT_CHARMS.contains(leftStack.getItem().getRegistryName()))
         {
-            return SortingHelper.compareCharms(leftStack.getDisplayName().getString(),
+            return SortingHelper.compareCharms(leftName,
                 AttributeGearData.read(leftStack),
                 leftStack.getTag(),
-                rightStack.getDisplayName().getString(),
+                rightName,
                 AttributeGearData.read(rightStack),
                 rightStack.getTag(),
                 sortBy,
@@ -158,18 +168,18 @@ public class SortingHelper
         }
         else if (leftStack.getItem() == ModItems.VAULT_CATALYST_INFUSED)
         {
-            return SortingHelper.compareCatalysts(leftStack.getDisplayName().getString(),
+            return SortingHelper.compareCatalysts(leftName,
                 leftStack.getTag(),
-                rightStack.getDisplayName().getString(),
+                rightName,
                 rightStack.getTag(),
                 sortBy,
                 ascending);
         }
         else if (leftStack.getItem() == ModItems.VAULT_DOLL)
         {
-            return SortingHelper.compareVaultDolls(leftStack.getDisplayName().getString(),
+            return SortingHelper.compareVaultDolls(leftName,
                 leftStack.getTag(),
-                rightStack.getDisplayName().getString(),
+                rightName,
                 rightStack.getTag(),
                 sortBy,
                 ascending);
@@ -177,9 +187,9 @@ public class SortingHelper
         else if (leftStack.getItem() == ModItems.CARD)
         {
 
-            return SortingHelper.compareCards(leftStack.getDisplayName().getString(),
+            return SortingHelper.compareCards(leftName,
                 leftStack.getTag(),
-                rightStack.getDisplayName().getString(),
+                rightName,
                 rightStack.getTag(),
                 sortBy,
                 ascending);
@@ -292,10 +302,8 @@ public class SortingHelper
     private static int compareJewels(
         String leftName,
         VaultGearData leftData,
-        int leftCuts,
         String rightName,
         VaultGearData rightData,
-        int rightCuts,
         Configuration.SortBy sortBy,
         boolean ascending)
     {
@@ -329,7 +337,7 @@ public class SortingHelper
                 case SIZE -> SortingHelper.compareSizeAttribute(leftData, rightData);
                 case ATTRIBUTE_WEIGHT -> SortingHelper.compareAttributeValueWeight(leftData, leftAttribute, rightData, rightAttribute);
                 case LEVEL -> SortingHelper.compareLevel(leftData, rightData);
-                case CUTS -> SortingHelper.compareIntegerValue(rightCuts, leftCuts);
+                case CUTS -> 0;
             };
         }
 
@@ -351,10 +359,8 @@ public class SortingHelper
     private static int compareJewels(
         String leftName,
         GearDataCache leftData,
-        int leftCuts,
         String rightName,
         GearDataCache rightData,
-        int rightCuts,
         Configuration.SortBy sortBy,
         boolean ascending)
     {
@@ -380,7 +386,7 @@ public class SortingHelper
                 case ATTRIBUTE_WEIGHT -> SortingHelper.compareAttributeValueWeight(leftExtraCache, rightExtraCache);
                 case LEVEL -> SortingHelper.compareIntegerValue(leftExtraCache.getExtraGearLevel(),
                     rightExtraCache.getExtraGearLevel());
-                case CUTS -> SortingHelper.compareIntegerValue(rightCuts, leftCuts);
+                case CUTS -> 0;
             };
         }
 
@@ -402,10 +408,8 @@ public class SortingHelper
     private static int compareJewels(
         String leftName,
         CompoundTag leftData,
-        int leftCuts,
         String rightName,
         CompoundTag rightData,
-        int rightCuts,
         Configuration.SortBy sortBy,
         boolean ascending)
     {
@@ -432,7 +436,7 @@ public class SortingHelper
                 }
                 case LEVEL -> SortingHelper.compareIntegerValue(leftData.getInt(EXTRA_GEAR_LEVEL),
                     rightData.getInt(EXTRA_GEAR_LEVEL));
-                case CUTS -> SortingHelper.compareIntegerValue(rightCuts, leftCuts);
+                case CUTS -> 0;
             };
         }
 
@@ -599,23 +603,6 @@ public class SortingHelper
         }
 
         return ascending ? returnValue : -returnValue;
-    }
-
-
-    private static int compareTrinkets(
-        ItemStack leftStack,
-        ItemStack rightStack,
-        Configuration.SortBy sortBy,
-        boolean ascending
-    ) {
-        return compareTrinkets(leftStack.getDisplayName().getString(),
-            AttributeGearData.read(leftStack),
-            leftStack.getTag(),
-            rightStack.getDisplayName().getString(),
-            AttributeGearData.read(rightStack),
-            rightStack.getTag(),
-            sortBy,
-            ascending);
     }
 
     /**

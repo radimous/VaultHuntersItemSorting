@@ -68,6 +68,8 @@ public class MixinStoredItemStackComparatorName
         Integer cmpRv = SortingHelper.compareItems(
             leftStack,
             rightStack,
+            left.getDisplayName(),
+            right.getDisplayName(),
             Configuration.SortBy.NAME,
             !this.reversed);
         if (cmpRv != null) {

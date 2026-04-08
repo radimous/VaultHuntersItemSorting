@@ -1,11 +1,5 @@
 package lv.id.bonne.vaulthunters.jewelsorting.sophisticatedcore.mixin;
 
-import iskallia.vault.gear.data.AttributeGearData;
-import iskallia.vault.gear.data.VaultGearData;
-import iskallia.vault.init.ModItems;
-import iskallia.vault.item.crystal.CrystalData;
-import iskallia.vault.item.data.InscriptionData;
-import lv.id.bonne.vaulthunters.jewelsorting.VaultJewelSorting;
 import lv.id.bonne.vaulthunters.jewelsorting.config.Configuration;
 import lv.id.bonne.vaulthunters.jewelsorting.utils.SortingHelper;
 import net.minecraft.world.item.ItemStack;

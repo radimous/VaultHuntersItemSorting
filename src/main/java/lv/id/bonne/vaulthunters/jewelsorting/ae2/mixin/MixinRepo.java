@@ -92,18 +92,22 @@ public abstract class MixinRepo
                 rightWhat.getId(),
                 ascending);
 
-
-            ItemStack leftStack = new ItemStack(leftItem, 1, leftTag);
-            ItemStack rightStack = new ItemStack(rightItem, 1, rightTag);
-
             if (registryOrder != 0 || !SortingHelper.isSortable(leftId) || leftTag == null || rightTag == null)
             {
                 // Use default string comparing
                 return registryOrder;
             }
+
+            ItemStack leftStack = new ItemStack(leftItem);
+            leftStack.setTag(leftTag);
+            ItemStack rightStack = new ItemStack(rightItem);
+            rightStack.setTag(rightTag);
+
             Integer cmpRv = SortingHelper.compareItems(
                 leftStack,
                 rightStack,
+                leftWhat.getDisplayName().getString(),
+                rightWhat.getDisplayName().getString(),
                 sortBy,
                 ascending);
             return cmpRv == null ? 0 : cmpRv;
