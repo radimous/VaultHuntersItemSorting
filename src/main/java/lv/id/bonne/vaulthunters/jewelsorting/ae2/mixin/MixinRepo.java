@@ -9,6 +9,7 @@ package lv.id.bonne.vaulthunters.jewelsorting.ae2.mixin;
 
 import lv.id.bonne.vaulthunters.jewelsorting.config.Configuration;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -91,6 +92,9 @@ public abstract class MixinRepo
                 rightWhat.getId(),
                 ascending);
 
+
+            ItemStack leftStack = new ItemStack(leftItem, 1, leftTag);
+            ItemStack rightStack = new ItemStack(rightItem, 1, rightTag);
 
             if (registryOrder != 0 || !SortingHelper.isSortable(leftId) || leftTag == null || rightTag == null)
             {
