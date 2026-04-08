@@ -78,7 +78,7 @@ public class MixinNetworkWidget
                         rightStack.getDisplayName().getString(),
                         VaultGearData.read(rightStack),
                         rightStack.getOrCreateTag().getInt("freeCuts"),
-                        VaultJewelSorting.CONFIGURATION.getJewelSortingOptions(sortBy),
+                        sortBy,
                         this.gui.getDownwards());
             }
             else if (leftStack.getItem() == ModItems.TOOL)
@@ -96,7 +96,7 @@ public class MixinNetworkWidget
                         VaultGearData.read(leftStack),
                         rightStack.getDisplayName().getString(),
                         VaultGearData.read(rightStack),
-                        VaultJewelSorting.CONFIGURATION.getGearSortingOptions(sortBy),
+                        sortBy,
                         this.gui.getDownwards());
             }
             else if (leftStack.getItem() == ModItems.INSCRIPTION)
@@ -105,7 +105,7 @@ public class MixinNetworkWidget
                         InscriptionData.from(leftStack),
                         rightStack.getDisplayName().getString(),
                         InscriptionData.from(rightStack),
-                        VaultJewelSorting.CONFIGURATION.getInscriptionSortingOptions(sortBy),
+                        sortBy,
                         true);
             }
             else if (leftStack.getItem() == ModItems.VAULT_CRYSTAL)
@@ -114,7 +114,7 @@ public class MixinNetworkWidget
                         CrystalData.read(leftStack),
                         rightStack.getDisplayName().getString(),
                         CrystalData.read(rightStack),
-                        VaultJewelSorting.CONFIGURATION.getVaultCrystalSortingOptions(sortBy),
+                        sortBy,
                         true);
             }
             else if (leftStack.getItem() == ModItems.TRINKET)
@@ -136,7 +136,7 @@ public class MixinNetworkWidget
                         rightStack.getDisplayName().getString(),
                         AttributeGearData.read(rightStack),
                         rightStack.getTag(),
-                        VaultJewelSorting.CONFIGURATION.getCharmSortingOptions(sortBy),
+                        sortBy,
                         true);
 
             }
@@ -146,7 +146,7 @@ public class MixinNetworkWidget
                         leftStack.getTag(),
                         rightStack.getDisplayName().getString(),
                         rightStack.getTag(),
-                        VaultJewelSorting.CONFIGURATION.getCatalystSortingOptions(sortBy),
+                        sortBy,
                         true);
             }
             else if (leftStack.getItem() == ModItems.VAULT_DOLL)
@@ -155,7 +155,7 @@ public class MixinNetworkWidget
                         leftStack.getTag(),
                         rightStack.getDisplayName().getString(),
                         rightStack.getTag(),
-                        VaultJewelSorting.CONFIGURATION.getDollSortingOptions(sortBy),
+                        sortBy,
                         true);
             }
             else if (leftStack.getItem() == ModItems.CARD)
@@ -164,7 +164,7 @@ public class MixinNetworkWidget
                         leftStack.getTag(),
                         rightStack.getDisplayName().getString(),
                         rightStack.getTag(),
-                        VaultJewelSorting.CONFIGURATION.getCardSortingOptions(sortBy),
+                        sortBy,
                         true);
             }
             else

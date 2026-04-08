@@ -127,7 +127,7 @@ public abstract class MixinRepo
                             rightWhat.getDisplayName().getString(),
                             rightData,
                             rightTag.getInt("freeCuts"),
-                            VaultJewelSorting.CONFIGURATION.getJewelSortingOptions(sortBy),
+                            sortBy,
                             ascending);
                 }
                 else
@@ -138,7 +138,7 @@ public abstract class MixinRepo
                             rightWhat.getDisplayName().getString(),
                             rightTag.getCompound("clientCache"),
                             rightTag.getInt("freeCuts"),
-                            VaultJewelSorting.CONFIGURATION.getJewelSortingOptions(sortBy),
+                            sortBy,
                             ascending);
                 }
             }
@@ -154,7 +154,7 @@ public abstract class MixinRepo
                         leftData,
                         rightWhat.getDisplayName().getString(),
                         rightData,
-                        VaultJewelSorting.CONFIGURATION.getInscriptionSortingOptions(sortBy),
+                        sortBy,
                         ascending);
             }
             else if (leftId == ModItems.VAULT_CRYSTAL.getRegistryName())
@@ -169,7 +169,7 @@ public abstract class MixinRepo
                         leftData,
                         rightWhat.getDisplayName().getString(),
                         rightData,
-                        VaultJewelSorting.CONFIGURATION.getVaultCrystalSortingOptions(sortBy),
+                        sortBy,
                         ascending);
             }
             else if (leftId == ModItems.TRINKET.getRegistryName())
@@ -197,7 +197,7 @@ public abstract class MixinRepo
                         rightWhat.getDisplayName().getString(),
                         rightData,
                         rightTag,
-                        VaultJewelSorting.CONFIGURATION.getCharmSortingOptions(sortBy),
+                        sortBy,
                         ascending);
             }
             else if (leftId == ModItems.VAULT_CATALYST_INFUSED.getRegistryName())
@@ -206,7 +206,7 @@ public abstract class MixinRepo
                         leftTag,
                         rightWhat.getDisplayName().getString(),
                         rightTag,
-                        VaultJewelSorting.CONFIGURATION.getCatalystSortingOptions(sortBy),
+                        sortBy,
                         ascending);
             }
             else if (leftId == ModItems.VAULT_DOLL.getRegistryName())
@@ -215,7 +215,7 @@ public abstract class MixinRepo
                         leftTag,
                         rightWhat.getDisplayName().getString(),
                         rightTag,
-                        VaultJewelSorting.CONFIGURATION.getDollSortingOptions(sortBy),
+                        sortBy,
                         ascending);
             }
 
@@ -225,7 +225,7 @@ public abstract class MixinRepo
                         leftTag,
                         rightWhat.getDisplayName().getString(),
                         rightTag,
-                        VaultJewelSorting.CONFIGURATION.getCardSortingOptions(sortBy),
+                        sortBy,
                         ascending);
             }
             //TODO:REFACTOR1[TAG]
@@ -238,7 +238,7 @@ public abstract class MixinRepo
                             leftData,
                             rightWhat.getDisplayName().getString(),
                             rightData,
-                            VaultJewelSorting.CONFIGURATION.getGearSortingOptions(sortBy),
+                            sortBy,
                             ascending);
                 }
                 Integer simpleCmpRv = SortingHelper.simpleItemAndTagCompare(leftItem, leftTag, rightItem, rightTag, ascending);

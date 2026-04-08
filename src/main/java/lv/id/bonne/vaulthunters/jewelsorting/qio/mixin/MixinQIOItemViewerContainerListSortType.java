@@ -193,7 +193,7 @@ public class MixinQIOItemViewerContainerListSortType
                     rightStack.getDisplayName().getString(),
                     rightData,
                     rightStack.getOrCreateTag().getInt("freeCuts"),
-                    VaultJewelSorting.CONFIGURATION.getJewelSortingOptions(sortBy),
+                    sortBy,
                     ascending);
         }
         else if (leftStack.getItem() == ModItems.TOOL)
@@ -207,7 +207,7 @@ public class MixinQIOItemViewerContainerListSortType
                     VaultGearData.read(leftStack),
                     rightStack.getDisplayName().getString(),
                     VaultGearData.read(rightStack),
-                    VaultJewelSorting.CONFIGURATION.getGearSortingOptions(sortBy),
+                    sortBy,
                     ascending);
         }
         else if (leftStack.getItem() == ModItems.INSCRIPTION)
@@ -216,7 +216,7 @@ public class MixinQIOItemViewerContainerListSortType
                     InscriptionData.from(leftStack),
                     rightStack.getDisplayName().getString(),
                     InscriptionData.from(rightStack),
-                    VaultJewelSorting.CONFIGURATION.getInscriptionSortingOptions(sortBy),
+                    sortBy,
                     ascending);
         }
         else if (leftStack.getItem() == ModItems.VAULT_CRYSTAL)
@@ -225,7 +225,7 @@ public class MixinQIOItemViewerContainerListSortType
                     CrystalData.read(leftStack),
                     rightStack.getDisplayName().getString(),
                     CrystalData.read(rightStack),
-                    VaultJewelSorting.CONFIGURATION.getVaultCrystalSortingOptions(sortBy),
+                    sortBy,
                     ascending);
         }
         else if (leftStack.getItem() == ModItems.TRINKET)
@@ -247,7 +247,7 @@ public class MixinQIOItemViewerContainerListSortType
                     rightStack.getDisplayName().getString(),
                     AttributeGearData.read(rightStack),
                     rightStack.getTag(),
-                    VaultJewelSorting.CONFIGURATION.getCharmSortingOptions(sortBy),
+                    sortBy,
                     ascending);
         }
         else if (leftStack.getItem() == ModItems.VAULT_CATALYST_INFUSED)
@@ -256,7 +256,7 @@ public class MixinQIOItemViewerContainerListSortType
                     leftStack.getTag(),
                     rightStack.getDisplayName().getString(),
                     rightStack.getTag(),
-                    VaultJewelSorting.CONFIGURATION.getCatalystSortingOptions(sortBy),
+                    sortBy,
                     ascending);
         }
         else if (leftStack.getItem() == ModItems.VAULT_DOLL)
@@ -265,7 +265,7 @@ public class MixinQIOItemViewerContainerListSortType
                     leftStack.getTag(),
                     rightStack.getDisplayName().getString(),
                     rightStack.getTag(),
-                    VaultJewelSorting.CONFIGURATION.getDollSortingOptions(sortBy),
+                    sortBy,
                     ascending);
         }
         else if (leftStack.getItem() == ModItems.CARD)
@@ -275,7 +275,7 @@ public class MixinQIOItemViewerContainerListSortType
                     leftStack.getTag(),
                     rightStack.getDisplayName().getString(),
                     rightStack.getTag(),
-                    VaultJewelSorting.CONFIGURATION.getCardSortingOptions(sortBy),
+                    sortBy,
                     ascending);
         }
         //TODO:REFACTOR2[TAG]
