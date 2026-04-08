@@ -82,6 +82,8 @@ public class MixinQuantityGridSorter
             Integer cmpRv = SortingHelper.compareItems(
                 leftStack,
                 rightStack,
+                left.getName(),
+                right.getName(),
                 Configuration.SortBy.AMOUNT,
                 sortingDirection == SortingDirection.ASCENDING);
             if (cmpRv != null) {
