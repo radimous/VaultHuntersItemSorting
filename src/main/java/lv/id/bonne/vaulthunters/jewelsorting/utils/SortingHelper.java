@@ -278,7 +278,7 @@ public class SortingHelper
      * @param ascending the ascending
      * @return the comparison of two given jewels.
      */
-    public static int compareJewels(
+    private static int compareJewels(
         String leftName,
         VaultGearData leftData,
         int leftCuts,
@@ -337,7 +337,7 @@ public class SortingHelper
      * @param ascending the ascending
      * @return the comparison of two given jewels.
      */
-    public static int compareJewels(
+    private static int compareJewels(
         String leftName,
         GearDataCache leftData,
         int leftCuts,
@@ -388,7 +388,7 @@ public class SortingHelper
      * @param ascending the ascending
      * @return the comparison of two given jewels.
      */
-    public static int compareJewels(
+    private static int compareJewels(
         String leftName,
         CompoundTag leftData,
         int leftCuts,
@@ -440,7 +440,7 @@ public class SortingHelper
      * @param ascending the ascending
      * @return the comparison of two given vault gear items.
      */
-    public static int compareVaultGear(String leftName,
+    private static int compareVaultGear(String leftName,
         VaultGearData leftData,
         String rightName,
         VaultGearData rightData,
@@ -480,7 +480,7 @@ public class SortingHelper
      * @param ascending the ascending
      * @return the comparison of two given vault gear items.
      */
-    public static int compareInscriptions(String leftName,
+    private static int compareInscriptions(String leftName,
         InscriptionData leftData,
         String rightName,
         InscriptionData rightData,
@@ -522,7 +522,7 @@ public class SortingHelper
      * @param ascending the ascending
      * @return the comparison of two given infused catalyst items.
      */
-    public static int compareCatalysts(String leftName,
+    private static int compareCatalysts(String leftName,
         CompoundTag leftData,
         String rightName,
         CompoundTag rightData,
@@ -563,7 +563,7 @@ public class SortingHelper
      * @param ascending the ascending
      * @return the comparison of two given vault crystals items.
      */
-    public static int compareVaultCrystals(String leftName,
+    private static int compareVaultCrystals(String leftName,
         CrystalData leftData,
         String rightName,
         CrystalData rightData,
@@ -591,7 +591,7 @@ public class SortingHelper
     }
 
 
-    public static int compareTrinkets(
+    private static int compareTrinkets(
         ItemStack leftStack,
         ItemStack rightStack,
         Configuration.SortBy sortBy,
@@ -619,7 +619,7 @@ public class SortingHelper
      * @param ascending the ascending
      * @return the comparison of two given vault trinkets items.
      */
-    public static int compareTrinkets(String leftName,
+    private static int compareTrinkets(String leftName,
         AttributeGearData leftData,
         CompoundTag leftTag,
         String rightName,
@@ -707,7 +707,7 @@ public class SortingHelper
      * @param ascending the ascending
      * @return the comparison of two given vault dolls items.
      */
-    public static int compareVaultDolls(String leftName,
+    private static int compareVaultDolls(String leftName,
         CompoundTag leftTag,
         String rightName,
         CompoundTag rightTag,
@@ -747,7 +747,7 @@ public class SortingHelper
      * @param ascending the ascending
      * @return the comparison of two given vault charms items.
      */
-    public static int compareCharms(String leftName,
+    private static int compareCharms(String leftName,
         AttributeGearData leftData,
         CompoundTag leftTag,
         String rightName,
@@ -1023,7 +1023,7 @@ public class SortingHelper
      * @param ascending the order of sort
      * @return the comparison of two given cards tags.
      */
-    public static int compareCards(String leftName,
+    private static int compareCards(String leftName,
         @Nullable CompoundTag leftTag,
         String rightName,
         @Nullable CompoundTag rightTag,
