@@ -160,18 +160,16 @@ public class MixinQuantityGridSorter
             }
             else if (leftStack.getItem() == ModItems.TRINKET)
             {
-                if (!VaultJewelSorting.CONFIGURATION.getTrinketSortingOptions(Configuration.SortBy.AMOUNT).isEmpty())
-                {
-                    cir.setReturnValue(
-                        SortingHelper.compareTrinkets(leftStack.getDisplayName().getString(),
-                            AttributeGearData.read(leftStack),
-                            leftStack.getTag(),
-                            rightStack.getDisplayName().getString(),
-                            AttributeGearData.read(rightStack),
-                            rightStack.getTag(),
-                            VaultJewelSorting.CONFIGURATION.getTrinketSortingOptions(Configuration.SortBy.AMOUNT),
-                            sortingDirection == SortingDirection.ASCENDING));
-                }
+                cir.setReturnValue(
+                    SortingHelper.compareTrinkets(leftStack.getDisplayName().getString(),
+                        AttributeGearData.read(leftStack),
+                        leftStack.getTag(),
+                        rightStack.getDisplayName().getString(),
+                        AttributeGearData.read(rightStack),
+                        rightStack.getTag(),
+                        Configuration.SortBy.AMOUNT,
+                        sortingDirection == SortingDirection.ASCENDING));
+
             }
             else if (SortingHelper.VAULT_CHARMS.contains(leftStack.getItem().getRegistryName()))
             {
