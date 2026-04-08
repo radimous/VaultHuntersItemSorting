@@ -144,7 +144,7 @@ public class SortingHelper
      * @param leftData the left data
      * @param rightName the right name
      * @param rightData the right data
-     * @param sortingOrder the sorting order
+     * @param sortBy the sorting order
      * @param ascending the ascending
      * @return the comparison of two given jewels.
      */
@@ -155,9 +155,12 @@ public class SortingHelper
         String rightName,
         VaultGearData rightData,
         int rightCuts,
-        List<JewelOptions> sortingOrder,
+        Configuration.SortBy sortBy,
         boolean ascending)
     {
+
+        List<JewelOptions> sortingOrder = VaultJewelSorting.CONFIGURATION.getJewelSortingOptions(sortBy);
+
         // Get all affixes for left item.
         List<VaultGearModifier<?>> leftAffixes = new ArrayList<>();
         leftAffixes.addAll(leftData.getModifiers(VaultGearModifier.AffixType.PREFIX));
@@ -200,7 +203,7 @@ public class SortingHelper
      * @param leftData the left data
      * @param rightName the right name
      * @param rightData the right data
-     * @param sortingOrder the sorting order
+     * @param sortBy the sorting order
      * @param ascending the ascending
      * @return the comparison of two given jewels.
      */
@@ -211,9 +214,11 @@ public class SortingHelper
         String rightName,
         GearDataCache rightData,
         int rightCuts,
-        List<JewelOptions> sortingOrder,
+        Configuration.SortBy sortBy,
         boolean ascending)
     {
+
+        List<JewelOptions> sortingOrder = VaultJewelSorting.CONFIGURATION.getJewelSortingOptions(sortBy);
         int returnValue = 0;
 
         IExtraGearDataCache leftExtraCache = (IExtraGearDataCache) leftData;
@@ -249,7 +254,7 @@ public class SortingHelper
      * @param leftData the left data
      * @param rightName the right name
      * @param rightData the right data
-     * @param sortingOrder the sorting order
+     * @param sortBy the sorting order
      * @param ascending the ascending
      * @return the comparison of two given jewels.
      */
@@ -260,9 +265,10 @@ public class SortingHelper
         String rightName,
         CompoundTag rightData,
         int rightCuts,
-        List<JewelOptions> sortingOrder,
+        Configuration.SortBy sortBy,
         boolean ascending)
     {
+        List<JewelOptions> sortingOrder = VaultJewelSorting.CONFIGURATION.getJewelSortingOptions(sortBy);
         int returnValue = 0;
         for (int i = 0, sortingOrderSize = sortingOrder.size(); returnValue == 0 && i < sortingOrderSize; i++)
         {
@@ -300,7 +306,7 @@ public class SortingHelper
      * @param leftData the left data
      * @param rightName the right name
      * @param rightData the right data
-     * @param sortingOrder the sorting order
+     * @param sortBy the sorting order
      * @param ascending the ascending
      * @return the comparison of two given vault gear items.
      */
@@ -308,9 +314,11 @@ public class SortingHelper
         VaultGearData leftData,
         String rightName,
         VaultGearData rightData,
-        List<GearOptions> sortingOrder,
+        Configuration.SortBy sortBy,
         boolean ascending)
     {
+
+        List<GearOptions> sortingOrder = VaultJewelSorting.CONFIGURATION.getGearSortingOptions(sortBy);
         // Start comparing with the current vault gear state.
         int returnValue = 0;
 
@@ -338,7 +346,7 @@ public class SortingHelper
      * @param leftData the left data
      * @param rightName the right name
      * @param rightData the right data
-     * @param sortingOrder the sorting order
+     * @param sortBy the sorting order
      * @param ascending the ascending
      * @return the comparison of two given vault gear items.
      */
@@ -346,9 +354,10 @@ public class SortingHelper
         InscriptionData leftData,
         String rightName,
         InscriptionData rightData,
-        List<InscriptionOptions> sortingOrder,
+        Configuration.SortBy sortBy,
         boolean ascending)
     {
+        List<InscriptionOptions> sortingOrder = VaultJewelSorting.CONFIGURATION.getInscriptionSortingOptions(sortBy);
         // Start comparing with the current vault gear state.
         int returnValue = 0;
 
@@ -379,7 +388,7 @@ public class SortingHelper
      * @param leftData the left data
      * @param rightName the right name
      * @param rightData the right data
-     * @param sortingOrder the sorting order
+     * @param sortBy the sorting order
      * @param ascending the ascending
      * @return the comparison of two given infused catalyst items.
      */
@@ -387,9 +396,10 @@ public class SortingHelper
         CompoundTag leftData,
         String rightName,
         CompoundTag rightData,
-        List<CatalystOptions> sortingOrder,
+        Configuration.SortBy sortBy,
         boolean ascending)
     {
+        List<CatalystOptions> sortingOrder = VaultJewelSorting.CONFIGURATION.getCatalystSortingOptions(sortBy);
         if (leftData == null) leftData = new CompoundTag();
         if (rightData == null) rightData = new CompoundTag();
 
@@ -419,7 +429,7 @@ public class SortingHelper
      * @param leftData the left data
      * @param rightName the right name
      * @param rightData the right data
-     * @param sortingOrder the sorting order
+     * @param sortBy the sorting order
      * @param ascending the ascending
      * @return the comparison of two given vault crystals items.
      */
@@ -427,9 +437,10 @@ public class SortingHelper
         CrystalData leftData,
         String rightName,
         CrystalData rightData,
-        List<CrystalOptions> sortingOrder,
+        Configuration.SortBy sortBy,
         boolean ascending)
     {
+        List<CrystalOptions> sortingOrder = VaultJewelSorting.CONFIGURATION.getVaultCrystalSortingOptions(sortBy);
         int returnValue = 0;
 
         for (int i = 0, sortingOrderSize = sortingOrder.size(); returnValue == 0 && i < sortingOrderSize; i++)
@@ -562,7 +573,7 @@ public class SortingHelper
      * @param leftTag the left data
      * @param rightName the right name
      * @param rightTag the right data
-     * @param sortingOrder the sorting order
+     * @param sortBy the sorting order
      * @param ascending the ascending
      * @return the comparison of two given vault dolls items.
      */
@@ -570,9 +581,11 @@ public class SortingHelper
         CompoundTag leftTag,
         String rightName,
         CompoundTag rightTag,
-        List<DollOptions> sortingOrder,
+        Configuration.SortBy sortBy,
         boolean ascending)
     {
+
+        List<DollOptions> sortingOrder = VaultJewelSorting.CONFIGURATION.getDollSortingOptions(sortBy);
         int returnValue = 0;
 
         for (int i = 0, sortingOrderSize = sortingOrder.size(); returnValue == 0 && i < sortingOrderSize; i++)
@@ -600,7 +613,7 @@ public class SortingHelper
      * @param rightName the right name
      * @param rightData the right data
      * @param rightTag the right tag
-     * @param sortingOrder the sorting order
+     * @param sortBy the sorting order
      * @param ascending the ascending
      * @return the comparison of two given vault charms items.
      */
@@ -610,9 +623,10 @@ public class SortingHelper
         String rightName,
         AttributeGearData rightData,
         CompoundTag rightTag,
-        List<CharmOptions> sortingOrder,
+        Configuration.SortBy sortBy,
         boolean ascending)
     {
+        List<CharmOptions> sortingOrder = VaultJewelSorting.CONFIGURATION.getCharmSortingOptions(sortBy);
         int returnValue = Boolean.compare(isIdentified(leftData), isIdentified(rightData));
 
         if (!isIdentified(leftData) && returnValue == 0)
@@ -643,7 +657,7 @@ public class SortingHelper
      * @param ascending the order of sort
      * @return the comparison of two given relic fragment tags.
      */
-    public static int compareRelicFragments(@Nullable CompoundTag leftTag,
+    private static int compareRelicFragments(@Nullable CompoundTag leftTag,
         @Nullable CompoundTag rightTag,
         boolean ascending)
     {
@@ -676,7 +690,7 @@ public class SortingHelper
      * @param ascending the order of sort
      * @return the comparison of two given respec flasks tags.
      */
-    public static int compareRespecFlasks(@Nullable CompoundTag leftTag,
+    private static int compareRespecFlasks(@Nullable CompoundTag leftTag,
         @Nullable CompoundTag rightTag,
         boolean ascending)
     {
@@ -709,7 +723,7 @@ public class SortingHelper
      * @param ascending the order of sort
      * @return the comparison of two given faced focus tags.
      */
-    public static int compareFacedFocus(@Nullable CompoundTag leftTag,
+    private static int compareFacedFocus(@Nullable CompoundTag leftTag,
         @Nullable CompoundTag rightTag,
         boolean ascending)
     {
@@ -742,7 +756,7 @@ public class SortingHelper
      * @param ascending the order of sort
      * @return the comparison of two given augments tags.
      */
-    public static int compareAugments(@Nullable CompoundTag leftTag,
+    private static int compareAugments(@Nullable CompoundTag leftTag,
         @Nullable CompoundTag rightTag,
         boolean ascending)
     {
@@ -775,7 +789,7 @@ public class SortingHelper
      * @param ascending the order of sort
      * @return the comparison of two given booster packs tags.
      */
-    public static int compareBoosterPacks(@Nullable CompoundTag leftTag,
+    private static int compareBoosterPacks(@Nullable CompoundTag leftTag,
         @Nullable CompoundTag rightTag,
         boolean ascending)
     {
@@ -808,7 +822,7 @@ public class SortingHelper
      * @param ascending the order of sort
      * @return the comparison of two given decks tags.
      */
-    public static int compareDecks(@Nullable CompoundTag leftTag,
+    private static int compareDecks(@Nullable CompoundTag leftTag,
         @Nullable CompoundTag rightTag,
         boolean ascending)
     {
@@ -875,7 +889,7 @@ public class SortingHelper
      * @param leftTag The left tag of card
      * @param rightName The name of right card
      * @param rightTag The right tag of card
-     * @param sortingOrder The card ordering settings
+     * @param sortBy The card ordering settings
      * @param ascending the order of sort
      * @return the comparison of two given cards tags.
      */
@@ -883,9 +897,10 @@ public class SortingHelper
         @Nullable CompoundTag leftTag,
         String rightName,
         @Nullable CompoundTag rightTag,
-        List<CardOptions> sortingOrder,
+        Configuration.SortBy sortBy,
         boolean ascending)
     {
+        List<CardOptions> sortingOrder = VaultJewelSorting.CONFIGURATION.getCardSortingOptions(sortBy);
         int returnValue;
 
         if (leftTag != null && leftTag.contains(DATA, Tag.TAG_COMPOUND) &&
@@ -936,7 +951,7 @@ public class SortingHelper
      * @param ascending the order of sort
      * @return the comparison of two given antiques tags.
      */
-    public static int compareAntique(CompoundTag leftTag, CompoundTag rightTag, boolean ascending)
+    private static int compareAntique(CompoundTag leftTag, CompoundTag rightTag, boolean ascending)
     {
         int returnValue;
 
@@ -967,7 +982,7 @@ public class SortingHelper
      * @param ascending the order of sort
      * @return the comparison of two given pouch tags.
      */
-    public static int comparePouches(CompoundTag leftTag,
+    private static int comparePouches(CompoundTag leftTag,
         CompoundTag rightTag,
         boolean ascending)
     {
@@ -1003,7 +1018,7 @@ public class SortingHelper
         return ascending ? returnValue : -returnValue;
     }
 
-    public static Integer compareCompanionRelics(CompoundTag leftTag, CompoundTag rightTag, boolean ascending) {
+    private static Integer compareCompanionRelics(CompoundTag leftTag, CompoundTag rightTag, boolean ascending) {
         int returnValue;
         if (leftTag != null && rightTag != null)
         {
@@ -1049,7 +1064,7 @@ public class SortingHelper
         return ascending ? returnValue : -returnValue;
     }
 
-    public static Integer compareCompanionParticleTrails(CompoundTag leftTag, CompoundTag rightTag, boolean ascending) {
+    private static Integer compareCompanionParticleTrails(CompoundTag leftTag, CompoundTag rightTag, boolean ascending) {
         int returnValue;
         if (leftTag != null && rightTag != null) {
             returnValue = SortingHelper.compareIntegerValue(
@@ -1076,7 +1091,7 @@ public class SortingHelper
         return ascending ? returnValue : -returnValue;
     }
 
-    public static Integer compareTemporalShards(CompoundTag leftTag, CompoundTag rightTag, boolean ascending) {
+    private static Integer compareTemporalShards(CompoundTag leftTag, CompoundTag rightTag, boolean ascending) {
         int returnValue;
         if (leftTag != null && rightTag != null) {
             returnValue = SortingHelper.compareString(
@@ -1101,7 +1116,7 @@ public class SortingHelper
         return ascending ? returnValue : -returnValue;
     }
 
-    public static Integer compareDeckSockets(CompoundTag leftTag, CompoundTag rightTag, boolean ascending) {
+    private static Integer compareDeckSockets(CompoundTag leftTag, CompoundTag rightTag, boolean ascending) {
         int returnValue;
         if (leftTag != null && rightTag != null) {
             var leftModifier = leftTag.getCompound("DeckModifier");
