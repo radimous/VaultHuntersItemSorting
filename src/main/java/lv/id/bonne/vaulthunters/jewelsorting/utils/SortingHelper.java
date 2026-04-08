@@ -81,6 +81,17 @@ public class SortingHelper
                 GearDataCache.createCache(rightStack);
                 rightData = GearDataCache.of(rightStack);
             }
+            if (((IExtraGearDataCache) rightData).isInvalidCache() || ((IExtraGearDataCache) leftData).isInvalidCache()) {
+                // If cache is still invalid, then fallback to slower VaultGearData comparison.
+                return SortingHelper.compareJewels(leftStack.getDisplayName().getString(),
+                    VaultGearData.read(leftStack),
+                    leftStack.getOrCreateTag().getInt("freeCuts"),
+                    rightStack.getDisplayName().getString(),
+                    VaultGearData.read(rightStack),
+                    rightStack.getOrCreateTag().getInt("freeCuts"),
+                    sortBy,
+                    ascending);
+            }
 
             return SortingHelper.compareJewels(leftStack.getDisplayName().getString(),
                 leftData,
