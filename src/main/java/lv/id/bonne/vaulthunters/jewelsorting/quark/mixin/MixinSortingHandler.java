@@ -53,18 +53,17 @@ public class MixinSortingHandler
         // Deal with Jewels
         if (leftStack.getItem() == ModItems.JEWEL)
         {
-            if (!VaultJewelSorting.CONFIGURATION.getJewelSortingOptions(Configuration.SortBy.NAME).isEmpty())
-            {
-                cir.setReturnValue(
-                    SortingHelper.compareJewels(leftStack.getDisplayName().getString(),
-                        VaultGearData.read(leftStack),
-                        leftStack.getOrCreateTag().getInt("freeCuts"),
-                        rightStack.getDisplayName().getString(),
-                        VaultGearData.read(rightStack),
-                        rightStack.getOrCreateTag().getInt("freeCuts"),
-                        VaultJewelSorting.CONFIGURATION.getJewelSortingOptions(Configuration.SortBy.NAME),
-                        true));
-            }
+
+            cir.setReturnValue(
+                SortingHelper.compareJewels(leftStack.getDisplayName().getString(),
+                    VaultGearData.read(leftStack),
+                    leftStack.getOrCreateTag().getInt("freeCuts"),
+                    rightStack.getDisplayName().getString(),
+                    VaultGearData.read(rightStack),
+                    rightStack.getOrCreateTag().getInt("freeCuts"),
+                    Configuration.SortBy.NAME,
+                    true));
+
         }
         else if (leftStack.getItem() == ModItems.TOOL)
         {
@@ -76,55 +75,48 @@ public class MixinSortingHandler
         }
         else if (SortingHelper.VAULT_GEAR_SET.contains(leftStack.getItem().getRegistryName()))
         {
-            if (!VaultJewelSorting.CONFIGURATION.getGearSortingOptions(Configuration.SortBy.NAME).isEmpty())
-            {
-                cir.setReturnValue(
-                    SortingHelper.compareVaultGear(leftStack.getDisplayName().getString(),
-                        VaultGearData.read(leftStack),
-                        rightStack.getDisplayName().getString(),
-                        VaultGearData.read(rightStack),
-                        VaultJewelSorting.CONFIGURATION.getGearSortingOptions(Configuration.SortBy.NAME),
-                        true));
-            }
+            cir.setReturnValue(
+                SortingHelper.compareVaultGear(leftStack.getDisplayName().getString(),
+                    VaultGearData.read(leftStack),
+                    rightStack.getDisplayName().getString(),
+                    VaultGearData.read(rightStack),
+                    Configuration.SortBy.NAME,
+                    true));
+
         }
         else if (leftStack.getItem() == ModItems.INSCRIPTION)
         {
-            if (!VaultJewelSorting.CONFIGURATION.getInscriptionSortingOptions(Configuration.SortBy.NAME).isEmpty())
-            {
-                cir.setReturnValue(
-                    SortingHelper.compareInscriptions(leftStack.getDisplayName().getString(),
-                        InscriptionData.from(leftStack),
-                        rightStack.getDisplayName().getString(),
-                        InscriptionData.from(rightStack),
-                        VaultJewelSorting.CONFIGURATION.getInscriptionSortingOptions(Configuration.SortBy.NAME),
-                        true));
-            }
+            cir.setReturnValue(
+                SortingHelper.compareInscriptions(leftStack.getDisplayName().getString(),
+                    InscriptionData.from(leftStack),
+                    rightStack.getDisplayName().getString(),
+                    InscriptionData.from(rightStack),
+                    Configuration.SortBy.NAME,
+                    true));
+
         }
         else if (leftStack.getItem() == ModItems.VAULT_CATALYST_INFUSED)
         {
-            if (!VaultJewelSorting.CONFIGURATION.getCatalystSortingOptions(Configuration.SortBy.NAME).isEmpty())
-            {
-                cir.setReturnValue(
-                    SortingHelper.compareCatalysts(leftStack.getDisplayName().getString(),
-                        leftStack.getTag(),
-                        rightStack.getDisplayName().getString(),
-                        rightStack.getTag(),
-                        VaultJewelSorting.CONFIGURATION.getCatalystSortingOptions(Configuration.SortBy.NAME),
-                        true));
-            }
+
+            cir.setReturnValue(
+                SortingHelper.compareCatalysts(leftStack.getDisplayName().getString(),
+                    leftStack.getTag(),
+                    rightStack.getDisplayName().getString(),
+                    rightStack.getTag(),
+                    Configuration.SortBy.NAME,
+                    true));
+
         }
         else if (leftStack.getItem() == ModItems.VAULT_CRYSTAL)
         {
-            if (!VaultJewelSorting.CONFIGURATION.getVaultCrystalSortingOptions(Configuration.SortBy.NAME).isEmpty())
-            {
-                cir.setReturnValue(
-                    SortingHelper.compareVaultCrystals(leftStack.getDisplayName().getString(),
-                        CrystalData.read(leftStack),
-                        rightStack.getDisplayName().getString(),
-                        CrystalData.read(rightStack),
-                        VaultJewelSorting.CONFIGURATION.getVaultCrystalSortingOptions(Configuration.SortBy.NAME),
-                        true));
-            }
+            cir.setReturnValue(
+                SortingHelper.compareVaultCrystals(leftStack.getDisplayName().getString(),
+                    CrystalData.read(leftStack),
+                    rightStack.getDisplayName().getString(),
+                    CrystalData.read(rightStack),
+                    Configuration.SortBy.NAME,
+                    true));
+
         }
         else if (leftStack.getItem() == ModItems.TRINKET)
         {
@@ -141,31 +133,28 @@ public class MixinSortingHandler
         }
         else if (SortingHelper.VAULT_CHARMS.contains(leftStack.getItem().getRegistryName()))
         {
-            if (!VaultJewelSorting.CONFIGURATION.getCharmSortingOptions(Configuration.SortBy.NAME).isEmpty())
-            {
-                cir.setReturnValue(
-                    SortingHelper.compareCharms(leftStack.getDisplayName().getString(),
-                        AttributeGearData.read(leftStack),
-                        leftStack.getTag(),
-                        rightStack.getDisplayName().getString(),
-                        AttributeGearData.read(rightStack),
-                        rightStack.getTag(),
-                        VaultJewelSorting.CONFIGURATION.getCharmSortingOptions(Configuration.SortBy.NAME),
-                        true));
-            }
+
+            cir.setReturnValue(
+                SortingHelper.compareCharms(leftStack.getDisplayName().getString(),
+                    AttributeGearData.read(leftStack),
+                    leftStack.getTag(),
+                    rightStack.getDisplayName().getString(),
+                    AttributeGearData.read(rightStack),
+                    rightStack.getTag(),
+                    Configuration.SortBy.NAME,
+                    true));
+
         }
         else if (leftStack.getItem() == ModItems.VAULT_DOLL)
         {
-            if (!VaultJewelSorting.CONFIGURATION.getDollSortingOptions(Configuration.SortBy.NAME).isEmpty())
-            {
-                cir.setReturnValue(
-                    SortingHelper.compareVaultDolls(leftStack.getDisplayName().getString(),
-                        leftStack.getTag(),
-                        rightStack.getDisplayName().getString(),
-                        rightStack.getTag(),
-                        VaultJewelSorting.CONFIGURATION.getDollSortingOptions(Configuration.SortBy.NAME),
-                        true));
-            }
+            cir.setReturnValue(
+                SortingHelper.compareVaultDolls(leftStack.getDisplayName().getString(),
+                    leftStack.getTag(),
+                    rightStack.getDisplayName().getString(),
+                    rightStack.getTag(),
+                    Configuration.SortBy.NAME,
+                    true));
+
         }
         else if (leftStack.getItem() == ModItems.CARD)
         {
@@ -174,7 +163,7 @@ public class MixinSortingHandler
                     leftStack.getTag(),
                     rightStack.getDisplayName().getString(),
                     rightStack.getTag(),
-                    VaultJewelSorting.CONFIGURATION.getCardSortingOptions(Configuration.SortBy.NAME),
+                    Configuration.SortBy.NAME,
                     true));
         } else {
             Integer simpleCmpRv = SortingHelper.simpleStackCompare(leftStack, rightStack, true);
