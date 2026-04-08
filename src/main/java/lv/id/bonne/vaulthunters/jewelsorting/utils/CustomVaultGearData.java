@@ -66,8 +66,13 @@ public class CustomVaultGearData extends VaultGearData
         Function<BitBuffer, T> bufferCtor,
         Supplier<T> ctor)
     {
-        return tag != null && tag.contains("vaultGearData", 12) ?
+        return hasVaultGearData(tag) ?
             bufferCtor.apply(ArrayBitBuffer.backing(tag.getLongArray("vaultGearData"), 0)) :
             ctor.get();
+    }
+
+    public static boolean hasVaultGearData(CompoundTag tag)
+    {
+        return tag != null && tag.contains("vaultGearData", 12);
     }
 }

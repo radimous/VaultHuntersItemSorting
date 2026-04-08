@@ -350,70 +350,43 @@ public class Configuration
         Configuration.GENERAL_SPEC = builder.build();
     }
 
-
-    /**
-     * Gets jewel sorting by name.
-     *
-     * @return the jewel sorting by name
-     */
-    public List<SortingHelper.JewelOptions> getJewelSortingByName()
+    public enum SortBy
     {
-        return this.convertStringToJewelEnum(this.jewelSortingByName.get());
+        NAME,
+        AMOUNT,
+        MOD
     }
 
-
     /**
-     * Gets jewel sorting by amount.
+     * Gets jewel sorting by the specified criteria.
      *
-     * @return the jewel sorting by amount
+     * @param sortBy the criteria to sort by
+     * @return the jewel sorting by the specified criteria
      */
-    public List<SortingHelper.JewelOptions> getJewelSortingByAmount()
+    public List<SortingHelper.JewelOptions> getJewelSortingOptions(SortBy sortBy)
     {
-        return this.convertStringToJewelEnum(this.jewelSortingByAmount.get());
+        return switch (sortBy)
+        {
+            case NAME -> this.convertStringToJewelEnum(this.jewelSortingByName.get());
+            case AMOUNT -> this.convertStringToJewelEnum(this.jewelSortingByAmount.get());
+            case MOD -> this.convertStringToJewelEnum(this.jewelSortingByMod.get());
+        };
     }
 
-
     /**
-     * Gets jewel sorting by mod.
+     * Gets gear sorting by the specified criteria.
      *
-     * @return the jewel sorting by mod
+     * @param sortBy the criteria to sort by
+     * @return the gear sorting by the specified criteria
      */
-    public List<SortingHelper.JewelOptions> getJewelSortingByMod()
+    public List<SortingHelper.GearOptions> getGearSortingOptions(SortBy sortBy)
     {
-        return this.convertStringToJewelEnum(this.jewelSortingByMod.get());
-    }
-
-
-    /**
-     * Gets gear sorting by name.
-     *
-     * @return the gear sorting by name
-     */
-    public List<SortingHelper.GearOptions> getGearSortingByName()
-    {
-        return this.convertStringToGearEnum(this.gearSortingByName.get());
-    }
-
-
-    /**
-     * Gets gear sorting by amount.
-     *
-     * @return the gear sorting by amount
-     */
-    public List<SortingHelper.GearOptions> getGearSortingByAmount()
-    {
-        return this.convertStringToGearEnum(this.gearSortingByAmount.get());
-    }
-
-
-    /**
-     * Gets gear sorting by mod.
-     *
-     * @return the gear sorting by mod
-     */
-    public List<SortingHelper.GearOptions> getGearSortingByMod()
-    {
-        return this.convertStringToGearEnum(this.gearSortingByMod.get());
+        return switch (sortBy)
+        {
+            case NAME -> this.convertStringToGearEnum(this.gearSortingByName.get());
+            case AMOUNT -> this.convertStringToGearEnum(this.gearSortingByAmount.get());
+            case MOD -> this.convertStringToGearEnum(this.gearSortingByMod.get());
+        };
     }
 
 
@@ -428,236 +401,75 @@ public class Configuration
     }
 
 
-    /**
-     * Inscription sorting by name.
-     *
-     * @return the Inscription sorting by name
-     */
-    public List<SortingHelper.InscriptionOptions> getInscriptionSortingByName()
+    public List<SortingHelper.InscriptionOptions> getInscriptionSortingOptions(SortBy sortBy)
     {
-        return this.convertStringToInscriptionEnum(this.inscriptionSortingByName.get());
+        return switch (sortBy)
+        {
+            case NAME -> this.convertStringToInscriptionEnum(this.inscriptionSortingByName.get());
+            case AMOUNT -> this.convertStringToInscriptionEnum(this.inscriptionSortingByAmount.get());
+            case MOD -> this.convertStringToInscriptionEnum(this.inscriptionSortingByMod.get());
+        };
     }
 
-
-    /**
-     * Gets inscription sorting by amount.
-     *
-     * @return the inscription sorting by amount
-     */
-    public List<SortingHelper.InscriptionOptions> getInscriptionSortingByAmount()
+    public List<SortingHelper.CrystalOptions> getVaultCrystalSortingOptions(SortBy sortBy)
     {
-        return this.convertStringToInscriptionEnum(this.inscriptionSortingByAmount.get());
+        return switch (sortBy)
+        {
+            case NAME -> this.convertStringToCrystalEnum(this.vaultCrystalSortingByName.get());
+            case AMOUNT -> this.convertStringToCrystalEnum(this.vaultCrystalSortingByAmount.get());
+            case MOD -> this.convertStringToCrystalEnum(this.vaultCrystalSortingByMod.get());
+        };
     }
 
-
-    /**
-     * Gets inscription sorting by mod.
-     *
-     * @return the inscription sorting by mod
-     */
-    public List<SortingHelper.InscriptionOptions> getInscriptionSortingByMod()
+    public List<SortingHelper.TrinketOptions> getTrinketSortingOptions(SortBy sortBy)
     {
-        return this.convertStringToInscriptionEnum(this.inscriptionSortingByMod.get());
+        return switch (sortBy)
+        {
+            case NAME -> this.convertStringToTrinketEnum(this.trinketSortingByName.get());
+            case AMOUNT -> this.convertStringToTrinketEnum(this.trinketSortingByAmount.get());
+            case MOD -> this.convertStringToTrinketEnum(this.trinketSortingByMod.get());
+        };
     }
 
-
-    /**
-     * Gets vault crystal sorting by name.
-     *
-     * @return the vault crystal sorting by name
-     */
-    public List<SortingHelper.CrystalOptions> getVaultCrystalSortingByName()
+    public List<SortingHelper.DollOptions> getDollSortingOptions(SortBy sortBy)
     {
-        return this.convertStringToCrystalEnum(this.vaultCrystalSortingByName.get());
+        return switch (sortBy)
+        {
+            case NAME -> this.convertStringToDollEnum(this.dollSortingByName.get());
+            case AMOUNT -> this.convertStringToDollEnum(this.dollSortingByAmount.get());
+            case MOD -> this.convertStringToDollEnum(this.dollSortingByMod.get());
+        };
     }
 
-
-    /**
-     * Gets vault crystal sorting by amount.
-     *
-     * @return the vault crystal sorting by amount
-     */
-    public List<SortingHelper.CrystalOptions> getVaultCrystalSortingByAmount()
+    public List<SortingHelper.CharmOptions> getCharmSortingOptions(SortBy sortBy)
     {
-        return this.convertStringToCrystalEnum(this.vaultCrystalSortingByAmount.get());
+        return switch (sortBy)
+        {
+            case NAME -> this.convertStringToCharmEnum(this.charmSortingByName.get());
+            case AMOUNT -> this.convertStringToCharmEnum(this.charmSortingByAmount.get());
+            case MOD -> this.convertStringToCharmEnum(this.charmSortingByMod.get());
+        };
     }
 
-
-    /**
-     * Gets vault crystal sorting by mod.
-     *
-     * @return the vault crystal sorting by mod
-     */
-    public List<SortingHelper.CrystalOptions> getVaultCrystalSortingByMod()
+    public List<SortingHelper.CatalystOptions> getCatalystSortingOptions(SortBy sortBy)
     {
-        return this.convertStringToCrystalEnum(this.vaultCrystalSortingByMod.get());
+        return switch (sortBy)
+        {
+            case NAME -> this.convertStringToCatalystEnum(this.catalystSortingByName.get());
+            case AMOUNT -> this.convertStringToCatalystEnum(this.catalystSortingByAmount.get());
+            case MOD -> this.convertStringToCatalystEnum(this.catalystSortingByMod.get());
+        };
     }
 
-
-    /**
-     * Gets Trinket sorting by name.
-     *
-     * @return the Trinket sorting by name
-     */
-    public List<SortingHelper.TrinketOptions> getTrinketSortingByName()
+    public List<SortingHelper.CardOptions> getCardSortingOptions(SortBy sortBy)
     {
-        return this.convertStringToTrinketEnum(this.trinketSortingByName.get());
+        return switch (sortBy)
+        {
+            case NAME -> this.convertStringToCardEnum(this.cardSortingByName.get());
+            case AMOUNT -> this.convertStringToCardEnum(this.cardSortingByAmount.get());
+            case MOD -> this.convertStringToCardEnum(this.cardSortingByMod.get());
+        };
     }
-
-
-    /**
-     * Gets Trinket sorting by amount.
-     *
-     * @return the Trinket sorting by amount
-     */
-    public List<SortingHelper.TrinketOptions> getTrinketSortingByAmount()
-    {
-        return this.convertStringToTrinketEnum(this.trinketSortingByAmount.get());
-    }
-
-
-    /**
-     * Gets Trinket sorting by mod.
-     *
-     * @return the Trinket sorting by mod
-     */
-    public List<SortingHelper.TrinketOptions> getTrinketSortingByMod()
-    {
-        return this.convertStringToTrinketEnum(this.trinketSortingByMod.get());
-    }
-
-
-    /**
-     * Gets Doll sorting by name.
-     *
-     * @return the Doll sorting by name
-     */
-    public List<SortingHelper.DollOptions> getDollSortingByName()
-    {
-        return this.convertStringToDollEnum(this.dollSortingByName.get());
-    }
-
-
-    /**
-     * Gets Doll sorting by amount.
-     *
-     * @return the Doll sorting by amount
-     */
-    public List<SortingHelper.DollOptions> getDollSortingByAmount()
-    {
-        return this.convertStringToDollEnum(this.dollSortingByAmount.get());
-    }
-
-
-    /**
-     * Gets Doll sorting by mod.
-     *
-     * @return the Doll sorting by mod
-     */
-    public List<SortingHelper.DollOptions> getDollSortingByMod()
-    {
-        return this.convertStringToDollEnum(this.dollSortingByMod.get());
-    }
-
-
-    /**
-     * Gets Doll sorting by name.
-     *
-     * @return the Doll sorting by name
-     */
-    public List<SortingHelper.CharmOptions> getCharmSortingByName()
-    {
-        return this.convertStringToCharmEnum(this.charmSortingByName.get());
-    }
-
-
-    /**
-     * Gets Charm sorting by amount.
-     *
-     * @return the Charm sorting by amount
-     */
-    public List<SortingHelper.CharmOptions> getCharmSortingByAmount()
-    {
-        return this.convertStringToCharmEnum(this.charmSortingByAmount.get());
-    }
-
-
-    /**
-     * Gets Charm sorting by mod.
-     *
-     * @return the Charm sorting by mod
-     */
-    public List<SortingHelper.CharmOptions> getCharmSortingByMod()
-    {
-        return this.convertStringToCharmEnum(this.charmSortingByMod.get());
-    }
-
-
-    /**
-     * Gets catalyst sorting by name.
-     *
-     * @return the catalyst sorting by name
-     */
-    public List<SortingHelper.CatalystOptions> getCatalystSortingByName()
-    {
-        return this.convertStringToCatalystEnum(this.catalystSortingByName.get());
-    }
-
-
-    /**
-     * Gets catalyst sorting by amount.
-     *
-     * @return the catalyst sorting by amount
-     */
-    public List<SortingHelper.CatalystOptions> getCatalystSortingByAmount()
-    {
-        return this.convertStringToCatalystEnum(this.catalystSortingByAmount.get());
-    }
-
-
-    /**
-     * Gets catalyst sorting by mod.
-     *
-     * @return the catalyst sorting by mod
-     */
-    public List<SortingHelper.CatalystOptions> getCatalystSortingByMod()
-    {
-        return this.convertStringToCatalystEnum(this.catalystSortingByMod.get());
-    }
-
-
-    /**
-     * Gets card sorting by name.
-     *
-     * @return the card sorting by name
-     */
-    public List<SortingHelper.CardOptions> getCardSortingByName()
-    {
-        return this.convertStringToCardEnum(this.cardSortingByName.get());
-    }
-
-
-    /**
-     * Gets card sorting by amount.
-     *
-     * @return the card sorting by amount
-     */
-    public List<SortingHelper.CardOptions> getCardSortingByAmount()
-    {
-        return this.convertStringToCardEnum(this.cardSortingByAmount.get());
-    }
-
-
-    /**
-     * Gets card sorting by mod.
-     *
-     * @return the card sorting by mod
-     */
-    public List<SortingHelper.CardOptions> getCardSortingByMod()
-    {
-        return this.convertStringToCardEnum(this.cardSortingByMod.get());
-    }
-
 
     /**
      * This method converts String list to Enum list.
