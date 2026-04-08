@@ -7,7 +7,10 @@
 package lv.id.bonne.vaulthunters.jewelsorting.utils;
 
 
+import iskallia.vault.item.SigilItem;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
@@ -46,6 +49,61 @@ public class SortingHelper
         return SortingHelper.VAULT_CHARMS.contains(id) ||
             SortingHelper.VAULT_GEAR_SET.contains(id) ||
             SortingHelper.CUSTOM_SORTING.contains(id);
+    }
+
+
+    public static @Nullable Integer simpleStackCompare(ItemStack leftStack, ItemStack rightStack, boolean ascending){
+
+        if (leftStack == rightStack ||
+            !leftStack.getItem().equals(rightStack.getItem()) ||
+            !SortingHelper.isSortable(leftStack.getItem().getRegistryName())) {
+            // Leave to original code.
+            return null;
+        }
+
+        if (leftStack.getItem() == ModItems.SIGIL) {
+            var leftSigilData = SigilItem.readSigil(leftStack).orElse(null);
+            var rightSigilData = SigilItem.readSigil(rightStack).orElse(null);
+            if (leftSigilData != null && rightSigilData != null) {
+                return Float.compare(leftSigilData.getDifficulty(), rightSigilData.getDifficulty());
+            }
+        }
+        return simpleItemAndTagCompare(leftStack.getItem(), leftStack.getTag(), rightStack.getItem(), rightStack.getTag(), ascending);
+    }
+
+    public static @Nullable Integer simpleItemAndTagCompare(Item leftItem, CompoundTag leftTag, Item rightItem, CompoundTag rightTag, boolean ascending) {
+        if (!leftItem.equals(rightItem) ||
+            !SortingHelper.isSortable(leftItem.getRegistryName())) {
+            // Leave to original code.
+            return null;
+        }
+
+        if (leftItem == ModItems.RELIC_FRAGMENT) {
+            return SortingHelper.compareRelicFragments(leftTag, rightTag, ascending);
+        } else if (leftItem == ModItems.RESPEC_FLASK) {
+            return SortingHelper.compareRespecFlasks(leftTag, rightTag, ascending);
+        } else if (leftItem == ModItems.FACETED_FOCUS) {
+            return SortingHelper.compareFacedFocus(leftTag, rightTag, ascending);
+        } else if (leftItem == ModItems.AUGMENT) {
+            return SortingHelper.compareAugments(leftTag, rightTag, ascending);
+        } else if (leftItem == ModItems.BOOSTER_PACK) {
+            return SortingHelper.compareBoosterPacks(leftTag, rightTag, ascending);
+        } else if (leftItem == ModItems.CARD_DECK) {
+            return SortingHelper.compareDecks(leftTag, rightTag, ascending);
+        } else if (leftItem == ModItems.ANTIQUE) {
+            return SortingHelper.compareAntique(leftTag, rightTag, ascending);
+        } else if (leftItem == ModItems.JEWEL_POUCH) {
+            return SortingHelper.comparePouches(leftTag, rightTag, ascending);
+        } else if (leftItem == ModItems.COMPANION_RELIC) {
+            return SortingHelper.compareCompanionRelics(leftTag, rightTag, ascending);
+        } else if (leftItem == ModItems.COMPANION_PARTICLE_TRAIL) {
+            return SortingHelper.compareCompanionParticleTrails(leftTag, rightTag, ascending);
+        } else if (leftItem == ModItems.TEMPORAL_SHARD) {
+            return SortingHelper.compareTemporalShards(leftTag, rightTag, ascending);
+        } else if (leftItem == ModItems.DECK_SOCKET) {
+            return SortingHelper.compareDeckSockets(leftTag, rightTag, ascending);
+        }
+        return null;
     }
 
 

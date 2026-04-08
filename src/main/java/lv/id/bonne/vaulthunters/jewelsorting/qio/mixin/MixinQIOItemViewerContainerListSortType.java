@@ -7,6 +7,7 @@
 package lv.id.bonne.vaulthunters.jewelsorting.qio.mixin;
 
 
+import lv.id.bonne.vaulthunters.jewelsorting.config.Configuration;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -154,6 +155,12 @@ public class MixinQIOItemViewerContainerListSortType
         QIOItemViewerContainer.ListSortType instance,
         boolean ascending)
     {
+        Configuration.SortBy sortBy = switch (instance) {
+            case NAME -> Configuration.SortBy.NAME;
+            case SIZE -> Configuration.SortBy.AMOUNT;
+            case MOD -> Configuration.SortBy.MOD;
+        };
+        
         if (firstItem.getItem() == ModItems.JEWEL)
         {
             String leftName = firstItem.getDisplayName().getString();
@@ -177,32 +184,14 @@ public class MixinQIOItemViewerContainerListSortType
                 rightData = GearDataCache.of(secondItem);
             }
 
-            return switch (instance) {
-                case NAME -> SortingHelper.compareJewels(leftName,
+            return SortingHelper.compareJewels(leftName,
                     leftData,
                     firstItem.getOrCreateTag().getInt("freeCuts"),
                     rightName,
                     rightData,
                     secondItem.getOrCreateTag().getInt("freeCuts"),
-                    VaultJewelSorting.CONFIGURATION.getJewelSortingByName(),
+                    VaultJewelSorting.CONFIGURATION.getJewelSortingOptions(sortBy),
                     ascending);
-                case SIZE -> SortingHelper.compareJewels(leftName,
-                    leftData,
-                    firstItem.getOrCreateTag().getInt("freeCuts"),
-                    rightName,
-                    rightData,
-                    secondItem.getOrCreateTag().getInt("freeCuts"),
-                    VaultJewelSorting.CONFIGURATION.getJewelSortingByAmount(),
-                    ascending);
-                case MOD -> SortingHelper.compareJewels(leftName,
-                    leftData,
-                    firstItem.getOrCreateTag().getInt("freeCuts"),
-                    rightName,
-                    rightData,
-                    secondItem.getOrCreateTag().getInt("freeCuts"),
-                    VaultJewelSorting.CONFIGURATION.getJewelSortingByMod(),
-                    ascending);
-            };
         }
         else if (firstItem.getItem() == ModItems.TOOL)
         {
@@ -216,26 +205,12 @@ public class MixinQIOItemViewerContainerListSortType
             VaultGearData leftData = VaultGearData.read(firstItem);
             VaultGearData rightData = VaultGearData.read(secondItem);
 
-            return switch (instance) {
-                case NAME -> SortingHelper.compareVaultGear(leftName,
+            return SortingHelper.compareVaultGear(leftName,
                     leftData,
                     rightName,
                     rightData,
-                    VaultJewelSorting.CONFIGURATION.getGearSortingByName(),
+                    VaultJewelSorting.CONFIGURATION.getGearSortingOptions(sortBy),
                     ascending);
-                case SIZE -> SortingHelper.compareVaultGear(leftName,
-                    leftData,
-                    rightName,
-                    rightData,
-                    VaultJewelSorting.CONFIGURATION.getGearSortingByAmount(),
-                    ascending);
-                case MOD -> SortingHelper.compareVaultGear(leftName,
-                    leftData,
-                    rightName,
-                    rightData,
-                    VaultJewelSorting.CONFIGURATION.getGearSortingByMod(),
-                    ascending);
-            };
         }
         else if (firstItem.getItem() == ModItems.INSCRIPTION)
         {
@@ -244,26 +219,12 @@ public class MixinQIOItemViewerContainerListSortType
             InscriptionData leftData = InscriptionData.from(firstItem);
             InscriptionData rightData = InscriptionData.from(secondItem);
 
-            return switch (instance) {
-                case NAME -> SortingHelper.compareInscriptions(leftName,
+            return SortingHelper.compareInscriptions(leftName,
                     leftData,
                     rightName,
                     rightData,
-                    VaultJewelSorting.CONFIGURATION.getInscriptionSortingByName(),
+                    VaultJewelSorting.CONFIGURATION.getInscriptionSortingOptions(sortBy),
                     ascending);
-                case SIZE -> SortingHelper.compareInscriptions(leftName,
-                    leftData,
-                    rightName,
-                    rightData,
-                    VaultJewelSorting.CONFIGURATION.getInscriptionSortingByAmount(),
-                    ascending);
-                case MOD -> SortingHelper.compareInscriptions(leftName,
-                    leftData,
-                    rightName,
-                    rightData,
-                    VaultJewelSorting.CONFIGURATION.getInscriptionSortingByMod(),
-                    ascending);
-            };
         }
         else if (firstItem.getItem() == ModItems.VAULT_CRYSTAL)
         {
@@ -272,26 +233,12 @@ public class MixinQIOItemViewerContainerListSortType
             CrystalData leftData = CrystalData.read(firstItem);
             CrystalData rightData = CrystalData.read(secondItem);
 
-            return switch (instance) {
-                case NAME -> SortingHelper.compareVaultCrystals(leftName,
+            return SortingHelper.compareVaultCrystals(leftName,
                     leftData,
                     rightName,
                     rightData,
-                    VaultJewelSorting.CONFIGURATION.getVaultCrystalSortingByName(),
+                    VaultJewelSorting.CONFIGURATION.getVaultCrystalSortingOptions(sortBy),
                     ascending);
-                case SIZE -> SortingHelper.compareVaultCrystals(leftName,
-                    leftData,
-                    rightName,
-                    rightData,
-                    VaultJewelSorting.CONFIGURATION.getVaultCrystalSortingByAmount(),
-                    ascending);
-                case MOD -> SortingHelper.compareVaultCrystals(leftName,
-                    leftData,
-                    rightName,
-                    rightData,
-                    VaultJewelSorting.CONFIGURATION.getVaultCrystalSortingByMod(),
-                    ascending);
-            };
         }
         else if (firstItem.getItem() == ModItems.TRINKET)
         {
@@ -300,33 +247,14 @@ public class MixinQIOItemViewerContainerListSortType
             AttributeGearData leftData = AttributeGearData.read(firstItem);
             AttributeGearData rightData = AttributeGearData.read(secondItem);
 
-            return switch (instance)
-            {
-                case NAME -> SortingHelper.compareTrinkets(leftName,
+            return SortingHelper.compareTrinkets(leftName,
                     leftData,
                     firstItem.getTag(),
                     rightName,
                     rightData,
                     secondItem.getTag(),
-                    VaultJewelSorting.CONFIGURATION.getTrinketSortingByName(),
+                    VaultJewelSorting.CONFIGURATION.getTrinketSortingOptions(sortBy),
                     ascending);
-                case SIZE -> SortingHelper.compareTrinkets(leftName,
-                    leftData,
-                    firstItem.getTag(),
-                    rightName,
-                    rightData,
-                    secondItem.getTag(),
-                    VaultJewelSorting.CONFIGURATION.getTrinketSortingByAmount(),
-                    ascending);
-                case MOD -> SortingHelper.compareTrinkets(leftName,
-                    leftData,
-                    firstItem.getTag(),
-                    rightName,
-                    rightData,
-                    secondItem.getTag(),
-                    VaultJewelSorting.CONFIGURATION.getTrinketSortingByMod(),
-                    ascending);
-            };
         }
         else if (SortingHelper.VAULT_CHARMS.contains(firstItem.getItem().getRegistryName()))
         {
@@ -335,204 +263,59 @@ public class MixinQIOItemViewerContainerListSortType
             AttributeGearData leftData = AttributeGearData.read(firstItem);
             AttributeGearData rightData = AttributeGearData.read(secondItem);
 
-            return switch (instance)
-            {
-                case NAME -> SortingHelper.compareCharms(leftName,
+            return SortingHelper.compareCharms(leftName,
                     leftData,
                     firstItem.getTag(),
                     rightName,
                     rightData,
                     secondItem.getTag(),
-                    VaultJewelSorting.CONFIGURATION.getCharmSortingByName(),
+                    VaultJewelSorting.CONFIGURATION.getCharmSortingOptions(sortBy),
                     ascending);
-                case SIZE -> SortingHelper.compareCharms(leftName,
-                    leftData,
-                    firstItem.getTag(),
-                    rightName,
-                    rightData,
-                    secondItem.getTag(),
-                    VaultJewelSorting.CONFIGURATION.getCharmSortingByAmount(),
-                    ascending);
-                case MOD -> SortingHelper.compareCharms(leftName,
-                    leftData,
-                    firstItem.getTag(),
-                    rightName,
-                    rightData,
-                    secondItem.getTag(),
-                    VaultJewelSorting.CONFIGURATION.getCharmSortingByMod(),
-                    ascending);
-            };
         }
         else if (firstItem.getItem() == ModItems.VAULT_CATALYST_INFUSED)
         {
             String leftName = firstItem.getDisplayName().getString();
             String rightName = secondItem.getDisplayName().getString();
 
-            return switch (instance)
-            {
-                case NAME -> SortingHelper.compareCatalysts(leftName,
+            return SortingHelper.compareCatalysts(leftName,
                     firstItem.getTag(),
                     rightName,
                     secondItem.getTag(),
-                    VaultJewelSorting.CONFIGURATION.getCatalystSortingByName(),
+                    VaultJewelSorting.CONFIGURATION.getCatalystSortingOptions(sortBy),
                     ascending);
-                case SIZE -> SortingHelper.compareCatalysts(leftName,
-                    firstItem.getTag(),
-                    rightName,
-                    secondItem.getTag(),
-                    VaultJewelSorting.CONFIGURATION.getCatalystSortingByAmount(),
-                    ascending);
-                case MOD -> SortingHelper.compareCatalysts(leftName,
-                    firstItem.getTag(),
-                    rightName,
-                    secondItem.getTag(),
-                    VaultJewelSorting.CONFIGURATION.getCatalystSortingByMod(),
-                    ascending);
-            };
         }
         else if (firstItem.getItem() == ModItems.VAULT_DOLL)
         {
             String leftName = firstItem.getDisplayName().getString();
             String rightName = secondItem.getDisplayName().getString();
 
-            return switch (instance)
-            {
-                case NAME -> SortingHelper.compareVaultDolls(leftName,
+            return SortingHelper.compareVaultDolls(leftName,
                     firstItem.getTag(),
                     rightName,
                     secondItem.getTag(),
-                    VaultJewelSorting.CONFIGURATION.getDollSortingByName(),
+                    VaultJewelSorting.CONFIGURATION.getDollSortingOptions(sortBy),
                     ascending);
-                case SIZE -> SortingHelper.compareVaultDolls(leftName,
-                    firstItem.getTag(),
-                    rightName,
-                    secondItem.getTag(),
-                    VaultJewelSorting.CONFIGURATION.getDollSortingByAmount(),
-                    ascending);
-                case MOD -> SortingHelper.compareVaultDolls(leftName,
-                    firstItem.getTag(),
-                    rightName,
-                    secondItem.getTag(),
-                    VaultJewelSorting.CONFIGURATION.getDollSortingByMod(),
-                    ascending);
-            };
-        }
-        else if (firstItem.getItem() == ModItems.RELIC_FRAGMENT)
-        {
-            return SortingHelper.compareRelicFragments(
-                firstItem.getTag(),
-                secondItem.getTag(),
-                ascending);
-        }
-        else if (firstItem.getItem() == ModItems.RESPEC_FLASK)
-        {
-            return SortingHelper.compareRespecFlasks(
-                firstItem.getTag(),
-                secondItem.getTag(),
-                ascending);
-        }
-        else if (firstItem.getItem() == ModItems.FACETED_FOCUS)
-        {
-            return SortingHelper.compareFacedFocus(
-                firstItem.getTag(),
-                secondItem.getTag(),
-                ascending);
-        }
-        else if (firstItem.getItem() == ModItems.AUGMENT)
-        {
-            return SortingHelper.compareAugments(
-                firstItem.getTag(),
-                secondItem.getTag(),
-                ascending);
         }
         else if (firstItem.getItem() == ModItems.CARD)
         {
             String leftName = firstItem.getDisplayName().getString();
             String rightName = secondItem.getDisplayName().getString();
 
-            return switch (instance)
-            {
-                case NAME -> SortingHelper.compareCards(leftName,
+            return SortingHelper.compareCards(leftName,
                     firstItem.getTag(),
                     rightName,
                     secondItem.getTag(),
-                    VaultJewelSorting.CONFIGURATION.getCardSortingByName(),
+                    VaultJewelSorting.CONFIGURATION.getCardSortingOptions(sortBy),
                     ascending);
-                case SIZE -> SortingHelper.compareCards(leftName,
-                    firstItem.getTag(),
-                    rightName,
-                    secondItem.getTag(),
-                    VaultJewelSorting.CONFIGURATION.getCardSortingByAmount(),
-                    ascending);
-                case MOD -> SortingHelper.compareCards(leftName,
-                    firstItem.getTag(),
-                    rightName,
-                    secondItem.getTag(),
-                    VaultJewelSorting.CONFIGURATION.getCardSortingByMod(),
-                    ascending);
-            };
-        }
-        else if (firstItem.getItem() == ModItems.CARD_DECK)
-        {
-            return SortingHelper.compareDecks(
-                firstItem.getTag(),
-                secondItem.getTag(),
-                ascending);
-        }
-        else if (firstItem.getItem() == ModItems.BOOSTER_PACK)
-        {
-            return SortingHelper.compareBoosterPacks(
-                firstItem.getTag(),
-                secondItem.getTag(),
-                ascending);
-        }
-        else if (firstItem.getItem() == ModItems.ANTIQUE)
-        {
-            return SortingHelper.compareAntique(
-                firstItem.getTag(),
-                secondItem.getTag(),
-                ascending);
-        }
-        else if (firstItem.getItem() == ModItems.JEWEL_POUCH)
-        {
-            return SortingHelper.comparePouches(
-                firstItem.getTag(),
-                secondItem.getTag(),
-                ascending);
-        }
-        else if (firstItem.getItem() == ModItems.COMPANION_RELIC)
-        {
-            return SortingHelper.compareCompanionRelics(
-                firstItem.getTag(),
-                secondItem.getTag(),
-                ascending);
-
-        }
-        else if (firstItem.getItem() == ModItems.COMPANION_PARTICLE_TRAIL)
-        {
-            return SortingHelper.compareCompanionParticleTrails(
-                firstItem.getTag(),
-                secondItem.getTag(),
-                ascending);
-
-        }
-        else if (firstItem.getItem() == ModItems.TEMPORAL_SHARD)
-        {
-            return SortingHelper.compareTemporalShards(
-                firstItem.getTag(),
-                secondItem.getTag(),
-                ascending);
-        }
-        else if (firstItem.getItem() == ModItems.DECK_SOCKET)
-        {
-            return SortingHelper.compareDeckSockets(
-                firstItem.getTag(),
-                secondItem.getTag(),
-                ascending);
         }
         //TODO:REFACTOR2[TAG]
         else
         {
+            Integer simpleCmpRv = SortingHelper.simpleStackCompare(firstItem, secondItem, ascending);
+            if (simpleCmpRv != null)
+            {
+                return simpleCmpRv;
+            }
             return 0;
         }
     }

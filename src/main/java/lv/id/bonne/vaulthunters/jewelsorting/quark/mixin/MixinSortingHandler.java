@@ -7,6 +7,8 @@
 package lv.id.bonne.vaulthunters.jewelsorting.quark.mixin;
 
 
+import iskallia.vault.item.SigilItem;
+import lv.id.bonne.vaulthunters.jewelsorting.config.Configuration;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -33,13 +35,13 @@ public class MixinSortingHandler
      * This method injects code at the start of stackCompare to sort jewel items.
      * @param stack1 The first stack item.
      * @param stack2 The second stack item.
-     * @param callbackInfoReturnable The callback info returnable.
+     * @param cir The callback info returnable.
      */
     @Inject(method = "stackCompare(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)I",
         at = @At("RETURN"),
         cancellable = true,
         remap = false)
-    private static void stackCompare(ItemStack stack1, ItemStack stack2, CallbackInfoReturnable<Integer> callbackInfoReturnable)
+    private static void stackCompare(ItemStack stack1, ItemStack stack2, CallbackInfoReturnable<Integer> cir)
     {
         if (stack1 == stack2 ||
             !stack1.getItem().equals(stack2.getItem()) ||
@@ -52,259 +54,137 @@ public class MixinSortingHandler
         // Deal with Jewels
         if (stack1.getItem() == ModItems.JEWEL)
         {
-            if (!VaultJewelSorting.CONFIGURATION.getJewelSortingByName().isEmpty())
+            if (!VaultJewelSorting.CONFIGURATION.getJewelSortingOptions(Configuration.SortBy.NAME).isEmpty())
             {
-                callbackInfoReturnable.setReturnValue(
+                cir.setReturnValue(
                     SortingHelper.compareJewels(stack1.getDisplayName().getString(),
                         VaultGearData.read(stack1),
                         stack1.getOrCreateTag().getInt("freeCuts"),
                         stack2.getDisplayName().getString(),
                         VaultGearData.read(stack2),
                         stack2.getOrCreateTag().getInt("freeCuts"),
-                        VaultJewelSorting.CONFIGURATION.getJewelSortingByName(),
+                        VaultJewelSorting.CONFIGURATION.getJewelSortingOptions(Configuration.SortBy.NAME),
                         true));
-
-                callbackInfoReturnable.cancel();
             }
         }
         else if (stack1.getItem() == ModItems.TOOL)
         {
 // TODO: Compare vault tools by their type? Currently is left just to filter out from VaultGearItem
-//                callbackInfoReturnable.setReturnValue(SortingHelper.compareTools(
+//                cir.setReturnValue(SortingHelper.compareTools(
 //                    VaultGearData.read(leftStack),
 //                    VaultGearData.read(rightStack),
 //                    sortingDirection == SortingDirection.ASCENDING));
-//                callbackInfoReturnable.cancel();
         }
         else if (SortingHelper.VAULT_GEAR_SET.contains(stack1.getItem().getRegistryName()))
         {
-            if (!VaultJewelSorting.CONFIGURATION.getGearSortingByName().isEmpty())
+            if (!VaultJewelSorting.CONFIGURATION.getGearSortingOptions(Configuration.SortBy.NAME).isEmpty())
             {
-                callbackInfoReturnable.setReturnValue(
+                cir.setReturnValue(
                     SortingHelper.compareVaultGear(stack1.getDisplayName().getString(),
                         VaultGearData.read(stack1),
                         stack2.getDisplayName().getString(),
                         VaultGearData.read(stack2),
-                        VaultJewelSorting.CONFIGURATION.getGearSortingByName(),
+                        VaultJewelSorting.CONFIGURATION.getGearSortingOptions(Configuration.SortBy.NAME),
                         true));
-
-                callbackInfoReturnable.cancel();
             }
         }
         else if (stack1.getItem() == ModItems.INSCRIPTION)
         {
-            if (!VaultJewelSorting.CONFIGURATION.getInscriptionSortingByName().isEmpty())
+            if (!VaultJewelSorting.CONFIGURATION.getInscriptionSortingOptions(Configuration.SortBy.NAME).isEmpty())
             {
-                callbackInfoReturnable.setReturnValue(
+                cir.setReturnValue(
                     SortingHelper.compareInscriptions(stack1.getDisplayName().getString(),
                         InscriptionData.from(stack1),
                         stack2.getDisplayName().getString(),
                         InscriptionData.from(stack2),
-                        VaultJewelSorting.CONFIGURATION.getInscriptionSortingByName(),
+                        VaultJewelSorting.CONFIGURATION.getInscriptionSortingOptions(Configuration.SortBy.NAME),
                         true));
-
-                callbackInfoReturnable.cancel();
             }
         }
         else if (stack1.getItem() == ModItems.VAULT_CATALYST_INFUSED)
         {
-            if (!VaultJewelSorting.CONFIGURATION.getCatalystSortingByName().isEmpty())
+            if (!VaultJewelSorting.CONFIGURATION.getCatalystSortingOptions(Configuration.SortBy.NAME).isEmpty())
             {
-                callbackInfoReturnable.setReturnValue(
+                cir.setReturnValue(
                     SortingHelper.compareCatalysts(stack1.getDisplayName().getString(),
                         stack1.getTag(),
                         stack2.getDisplayName().getString(),
                         stack2.getTag(),
-                        VaultJewelSorting.CONFIGURATION.getCatalystSortingByName(),
+                        VaultJewelSorting.CONFIGURATION.getCatalystSortingOptions(Configuration.SortBy.NAME),
                         true));
-
-                callbackInfoReturnable.cancel();
             }
         }
         else if (stack1.getItem() == ModItems.VAULT_CRYSTAL)
         {
-            if (!VaultJewelSorting.CONFIGURATION.getVaultCrystalSortingByName().isEmpty())
+            if (!VaultJewelSorting.CONFIGURATION.getVaultCrystalSortingOptions(Configuration.SortBy.NAME).isEmpty())
             {
-                callbackInfoReturnable.setReturnValue(
+                cir.setReturnValue(
                     SortingHelper.compareVaultCrystals(stack1.getDisplayName().getString(),
                         CrystalData.read(stack1),
                         stack2.getDisplayName().getString(),
                         CrystalData.read(stack2),
-                        VaultJewelSorting.CONFIGURATION.getVaultCrystalSortingByName(),
+                        VaultJewelSorting.CONFIGURATION.getVaultCrystalSortingOptions(Configuration.SortBy.NAME),
                         true));
-
-                callbackInfoReturnable.cancel();
             }
         }
         else if (stack1.getItem() == ModItems.TRINKET)
         {
-            if (!VaultJewelSorting.CONFIGURATION.getTrinketSortingByName().isEmpty())
+            if (!VaultJewelSorting.CONFIGURATION.getTrinketSortingOptions(Configuration.SortBy.NAME).isEmpty())
             {
-                callbackInfoReturnable.setReturnValue(
+                cir.setReturnValue(
                     SortingHelper.compareTrinkets(stack1.getDisplayName().getString(),
                         AttributeGearData.read(stack1),
                         stack1.getTag(),
                         stack2.getDisplayName().getString(),
                         AttributeGearData.read(stack2),
                         stack2.getTag(),
-                        VaultJewelSorting.CONFIGURATION.getTrinketSortingByName(),
+                        VaultJewelSorting.CONFIGURATION.getTrinketSortingOptions(Configuration.SortBy.NAME),
                         true));
-
-                callbackInfoReturnable.cancel();
             }
         }
         else if (SortingHelper.VAULT_CHARMS.contains(stack1.getItem().getRegistryName()))
         {
-            if (!VaultJewelSorting.CONFIGURATION.getCharmSortingByName().isEmpty())
+            if (!VaultJewelSorting.CONFIGURATION.getCharmSortingOptions(Configuration.SortBy.NAME).isEmpty())
             {
-                callbackInfoReturnable.setReturnValue(
+                cir.setReturnValue(
                     SortingHelper.compareCharms(stack1.getDisplayName().getString(),
                         AttributeGearData.read(stack1),
                         stack1.getTag(),
                         stack2.getDisplayName().getString(),
                         AttributeGearData.read(stack2),
                         stack2.getTag(),
-                        VaultJewelSorting.CONFIGURATION.getCharmSortingByName(),
+                        VaultJewelSorting.CONFIGURATION.getCharmSortingOptions(Configuration.SortBy.NAME),
                         true));
-
-                callbackInfoReturnable.cancel();
             }
         }
         else if (stack1.getItem() == ModItems.VAULT_DOLL)
         {
-            if (!VaultJewelSorting.CONFIGURATION.getDollSortingByName().isEmpty())
+            if (!VaultJewelSorting.CONFIGURATION.getDollSortingOptions(Configuration.SortBy.NAME).isEmpty())
             {
-                callbackInfoReturnable.setReturnValue(
+                cir.setReturnValue(
                     SortingHelper.compareVaultDolls(stack1.getDisplayName().getString(),
                         stack1.getTag(),
                         stack2.getDisplayName().getString(),
                         stack2.getTag(),
-                        VaultJewelSorting.CONFIGURATION.getDollSortingByName(),
+                        VaultJewelSorting.CONFIGURATION.getDollSortingOptions(Configuration.SortBy.NAME),
                         true));
-
-                callbackInfoReturnable.cancel();
             }
-        }
-        else if (stack1.getItem() == ModItems.RELIC_FRAGMENT)
-        {
-            callbackInfoReturnable.setReturnValue(
-                SortingHelper.compareRelicFragments(stack1.getTag(),
-                    stack2.getTag(),
-                    true));
-
-            callbackInfoReturnable.cancel();
-        }
-        else if (stack1.getItem() == ModItems.RESPEC_FLASK)
-        {
-            callbackInfoReturnable.setReturnValue(
-                SortingHelper.compareRespecFlasks(stack1.getTag(),
-                    stack2.getTag(),
-                    true));
-
-            callbackInfoReturnable.cancel();
-        }
-        else if (stack1.getItem() == ModItems.FACETED_FOCUS)
-        {
-            callbackInfoReturnable.setReturnValue(
-                SortingHelper.compareFacedFocus(stack1.getTag(),
-                    stack2.getTag(),
-                    true));
-
-            callbackInfoReturnable.cancel();
-        }
-        else if (stack1.getItem() == ModItems.AUGMENT)
-        {
-            callbackInfoReturnable.setReturnValue(
-                SortingHelper.compareAugments(stack1.getTag(),
-                    stack2.getTag(),
-                    true));
-
-            callbackInfoReturnable.cancel();
-        }
-        else if (stack1.getItem() == ModItems.BOOSTER_PACK)
-        {
-            callbackInfoReturnable.setReturnValue(
-                SortingHelper.compareBoosterPacks(stack1.getTag(),
-                    stack2.getTag(),
-                    true));
-
-            callbackInfoReturnable.cancel();
-        }
-        else if (stack1.getItem() == ModItems.CARD_DECK)
-        {
-            callbackInfoReturnable.setReturnValue(
-                SortingHelper.compareDecks(stack1.getTag(),
-                    stack2.getTag(),
-                    true));
-
-            callbackInfoReturnable.cancel();
         }
         else if (stack1.getItem() == ModItems.CARD)
         {
-            callbackInfoReturnable.setReturnValue(
+            cir.setReturnValue(
                 SortingHelper.compareCards(stack1.getDisplayName().getString(),
                     stack1.getTag(),
                     stack2.getDisplayName().getString(),
                     stack2.getTag(),
-                    VaultJewelSorting.CONFIGURATION.getCardSortingByName(),
+                    VaultJewelSorting.CONFIGURATION.getCardSortingOptions(Configuration.SortBy.NAME),
                     true));
-
-            callbackInfoReturnable.cancel();
+        } else {
+            Integer simpleCmpRv = SortingHelper.simpleStackCompare(stack1, stack2, true);
+            if (simpleCmpRv != null)
+            {
+                cir.setReturnValue(simpleCmpRv);
+            }
         }
-        else if (stack1.getItem() == ModItems.ANTIQUE)
-        {
-            callbackInfoReturnable.setReturnValue(
-                SortingHelper.compareAntique(stack1.getTag(),
-                    stack2.getTag(),
-                    true));
-
-            callbackInfoReturnable.cancel();
-        }
-        else if (stack1.getItem() == ModItems.JEWEL_POUCH)
-        {
-            callbackInfoReturnable.setReturnValue(
-                SortingHelper.comparePouches(stack1.getTag(),
-                    stack2.getTag(),
-                    true));
-
-            callbackInfoReturnable.cancel();
-        }
-        else if (stack1.getItem() == ModItems.COMPANION_RELIC)
-        {
-            callbackInfoReturnable.setReturnValue(
-                SortingHelper.compareCompanionRelics(stack1.getTag(),
-                    stack2.getTag(),
-                    true));
-
-            callbackInfoReturnable.cancel();
-        }
-        else if (stack1.getItem() == ModItems.COMPANION_PARTICLE_TRAIL)
-        {
-            callbackInfoReturnable.setReturnValue(
-                SortingHelper.compareCompanionParticleTrails(stack1.getTag(),
-                    stack2.getTag(),
-                    true));
-
-            callbackInfoReturnable.cancel();
-        }
-        else if (stack1.getItem() == ModItems.TEMPORAL_SHARD)
-        {
-            callbackInfoReturnable.setReturnValue(
-                SortingHelper.compareTemporalShards(stack1.getTag(),
-                    stack2.getTag(),
-                    true));
-
-            callbackInfoReturnable.cancel();
-        }
-        else if (stack1.getItem() == ModItems.DECK_SOCKET)
-        {
-            callbackInfoReturnable.setReturnValue(
-                SortingHelper.compareDeckSockets(stack1.getTag(),
-                    stack2.getTag(),
-                    true));
-
-            callbackInfoReturnable.cancel();
-        }
-        //TODO:REFACTOR3[TAG]
     }
 }

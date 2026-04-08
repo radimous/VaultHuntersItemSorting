@@ -10,6 +10,7 @@ package lv.id.bonne.vaulthunters.jewelsorting.refinedstorage.mixin;
 import com.refinedmods.refinedstorage.screen.grid.sorting.IdGridSorter;
 import com.refinedmods.refinedstorage.screen.grid.sorting.SortingDirection;
 import com.refinedmods.refinedstorage.screen.grid.stack.IGridStack;
+import lv.id.bonne.vaulthunters.jewelsorting.config.Configuration;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -39,7 +40,7 @@ public class MixinIdGridSorter
      * @param left The first stack item.
      * @param right The second stack item.
      * @param sortingDirection The sorting direction.
-     * @param callbackInfoReturnable The callback info returnable.
+     * @param cir The callback info returnable.
      */
     @Inject(method = "compare(Lcom/refinedmods/refinedstorage/screen/grid/stack/IGridStack;Lcom/refinedmods/refinedstorage/screen/grid/stack/IGridStack;Lcom/refinedmods/refinedstorage/screen/grid/sorting/SortingDirection;)I",
         at = @At("RETURN"),
@@ -48,9 +49,9 @@ public class MixinIdGridSorter
     public void compare(IGridStack left,
         IGridStack right,
         SortingDirection sortingDirection,
-        CallbackInfoReturnable<Integer> callbackInfoReturnable)
+        CallbackInfoReturnable<Integer> cir)
     {
-        if (Screen.hasShiftDown() || callbackInfoReturnable.getReturnValue() != 0)
+        if (Screen.hasShiftDown() || cir.getReturnValue() != 0)
         {
             // If shift is pressed or both names are not equal, then ignore.
             return;
@@ -67,11 +68,11 @@ public class MixinIdGridSorter
             if (registryOrder != 0 || !SortingHelper.isSortable(leftStack.getItem().getRegistryName()))
             {
                 // If registry order is not 0 or item is not sortable, then return it.
-                callbackInfoReturnable.setReturnValue(registryOrder);
+                cir.setReturnValue(registryOrder);
             }
             else if (leftStack.getItem() == ModItems.JEWEL)
             {
-                if (!VaultJewelSorting.CONFIGURATION.getJewelSortingByMod().isEmpty())
+                if (!VaultJewelSorting.CONFIGURATION.getJewelSortingOptions(Configuration.SortBy.MOD).isEmpty())
                 {
                     GearDataCache leftData = GearDataCache.of(leftStack);
                     GearDataCache rightData = GearDataCache.of(rightStack);
@@ -90,234 +91,135 @@ public class MixinIdGridSorter
                         GearDataCache.createCache(rightStack);
                     }
 
-                    callbackInfoReturnable.setReturnValue(SortingHelper.compareJewels(left.getName(),
+                    cir.setReturnValue(SortingHelper.compareJewels(left.getName(),
                         GearDataCache.of(leftStack),
                         leftStack.getOrCreateTag().getInt("freeCuts"),
                         right.getName(),
                         GearDataCache.of(rightStack),
                         rightStack.getOrCreateTag().getInt("freeCuts"),
-                        VaultJewelSorting.CONFIGURATION.getJewelSortingByMod(),
+                        VaultJewelSorting.CONFIGURATION.getJewelSortingOptions(Configuration.SortBy.MOD),
                         sortingDirection == SortingDirection.ASCENDING));
-                    callbackInfoReturnable.cancel();
                 }
             }
             else if (leftStack.getItem() == ModItems.TOOL)
             {
 // TODO: Compare vault tools by their type? Currently is left just to filter out from VaultGearItem
-//                callbackInfoReturnable.setReturnValue(SortingHelper.compareTools(
+//                cir.setReturnValue(SortingHelper.compareTools(
 //                    VaultGearData.read(leftStack),
 //                    VaultGearData.read(rightStack),
 //                    sortingDirection == SortingDirection.ASCENDING));
-//                callbackInfoReturnable.cancel();
             }
             else if (SortingHelper.VAULT_GEAR_SET.contains(leftStack.getItem().getRegistryName()))
             {
-                if (!VaultJewelSorting.CONFIGURATION.getGearSortingByMod().isEmpty())
+                if (!VaultJewelSorting.CONFIGURATION.getGearSortingOptions(Configuration.SortBy.MOD).isEmpty())
                 {
-                    callbackInfoReturnable.setReturnValue(SortingHelper.compareVaultGear(left.getName(),
+                    cir.setReturnValue(SortingHelper.compareVaultGear(left.getName(),
                         VaultGearData.read(leftStack),
                         right.getName(),
                         VaultGearData.read(rightStack),
-                        VaultJewelSorting.CONFIGURATION.getGearSortingByMod(),
+                        VaultJewelSorting.CONFIGURATION.getGearSortingOptions(Configuration.SortBy.MOD),
                         sortingDirection == SortingDirection.ASCENDING));
-                    callbackInfoReturnable.cancel();
                 }
             }
             else if (leftStack.getItem() == ModItems.INSCRIPTION)
             {
-                if (!VaultJewelSorting.CONFIGURATION.getInscriptionSortingByMod().isEmpty())
+                if (!VaultJewelSorting.CONFIGURATION.getInscriptionSortingOptions(Configuration.SortBy.MOD).isEmpty())
                 {
-                    callbackInfoReturnable.setReturnValue(SortingHelper.compareInscriptions(left.getName(),
+                    cir.setReturnValue(SortingHelper.compareInscriptions(left.getName(),
                         InscriptionData.from(leftStack),
                         right.getName(),
                         InscriptionData.from(rightStack),
-                        VaultJewelSorting.CONFIGURATION.getInscriptionSortingByMod(),
+                        VaultJewelSorting.CONFIGURATION.getInscriptionSortingOptions(Configuration.SortBy.MOD),
                         sortingDirection == SortingDirection.ASCENDING));
-                    callbackInfoReturnable.cancel();
                 }
             }
             else if (leftStack.getItem() == ModItems.VAULT_CRYSTAL)
             {
-                if (!VaultJewelSorting.CONFIGURATION.getVaultCrystalSortingByMod().isEmpty())
+                if (!VaultJewelSorting.CONFIGURATION.getVaultCrystalSortingOptions(Configuration.SortBy.MOD).isEmpty())
                 {
-                    callbackInfoReturnable.setReturnValue(
+                    cir.setReturnValue(
                         SortingHelper.compareVaultCrystals(leftStack.getDisplayName().getString(),
                             CrystalData.read(leftStack),
                             rightStack.getDisplayName().getString(),
                             CrystalData.read(rightStack),
-                            VaultJewelSorting.CONFIGURATION.getVaultCrystalSortingByMod(),
+                            VaultJewelSorting.CONFIGURATION.getVaultCrystalSortingOptions(Configuration.SortBy.MOD),
                             sortingDirection == SortingDirection.ASCENDING));
-                    callbackInfoReturnable.cancel();
                 }
             }
             else if (leftStack.getItem() == ModItems.TRINKET)
             {
-                if (!VaultJewelSorting.CONFIGURATION.getTrinketSortingByMod().isEmpty())
+                if (!VaultJewelSorting.CONFIGURATION.getTrinketSortingOptions(Configuration.SortBy.MOD).isEmpty())
                 {
-                    callbackInfoReturnable.setReturnValue(
+                    cir.setReturnValue(
                         SortingHelper.compareTrinkets(leftStack.getDisplayName().getString(),
                             AttributeGearData.read(leftStack),
                             leftStack.getTag(),
                             rightStack.getDisplayName().getString(),
                             AttributeGearData.read(rightStack),
                             rightStack.getTag(),
-                            VaultJewelSorting.CONFIGURATION.getTrinketSortingByMod(),
+                            VaultJewelSorting.CONFIGURATION.getTrinketSortingOptions(Configuration.SortBy.MOD),
                             sortingDirection == SortingDirection.ASCENDING));
-                    callbackInfoReturnable.cancel();
                 }
             }
             else if (SortingHelper.VAULT_CHARMS.contains(leftStack.getItem().getRegistryName()))
             {
-                if (!VaultJewelSorting.CONFIGURATION.getCharmSortingByMod().isEmpty())
+                if (!VaultJewelSorting.CONFIGURATION.getCharmSortingOptions(Configuration.SortBy.MOD).isEmpty())
                 {
-                    callbackInfoReturnable.setReturnValue(
+                    cir.setReturnValue(
                         SortingHelper.compareCharms(leftStack.getDisplayName().getString(),
                             AttributeGearData.read(leftStack),
                             leftStack.getTag(),
                             rightStack.getDisplayName().getString(),
                             AttributeGearData.read(rightStack),
                             rightStack.getTag(),
-                            VaultJewelSorting.CONFIGURATION.getCharmSortingByMod(),
+                            VaultJewelSorting.CONFIGURATION.getCharmSortingOptions(Configuration.SortBy.MOD),
                             sortingDirection == SortingDirection.ASCENDING));
-                    callbackInfoReturnable.cancel();
                 }
             }
             else if (leftStack.getItem() == ModItems.VAULT_CATALYST_INFUSED)
             {
-                if (!VaultJewelSorting.CONFIGURATION.getCatalystSortingByMod().isEmpty())
+                if (!VaultJewelSorting.CONFIGURATION.getCatalystSortingOptions(Configuration.SortBy.MOD).isEmpty())
                 {
-                    callbackInfoReturnable.setReturnValue(
+                    cir.setReturnValue(
                         SortingHelper.compareCatalysts(leftStack.getDisplayName().getString(),
                             leftStack.getTag(),
                             rightStack.getDisplayName().getString(),
                             rightStack.getTag(),
-                            VaultJewelSorting.CONFIGURATION.getCatalystSortingByMod(),
+                            VaultJewelSorting.CONFIGURATION.getCatalystSortingOptions(Configuration.SortBy.MOD),
                             sortingDirection == SortingDirection.ASCENDING));
                 }
             }
             else if (leftStack.getItem() == ModItems.VAULT_DOLL)
             {
-                if (!VaultJewelSorting.CONFIGURATION.getDollSortingByMod().isEmpty())
+                if (!VaultJewelSorting.CONFIGURATION.getDollSortingOptions(Configuration.SortBy.MOD).isEmpty())
                 {
-                    callbackInfoReturnable.setReturnValue(
+                    cir.setReturnValue(
                         SortingHelper.compareVaultDolls(leftStack.getDisplayName().getString(),
                             leftStack.getTag(),
                             rightStack.getDisplayName().getString(),
                             rightStack.getTag(),
-                            VaultJewelSorting.CONFIGURATION.getDollSortingByMod(),
+                            VaultJewelSorting.CONFIGURATION.getDollSortingOptions(Configuration.SortBy.MOD),
                             sortingDirection == SortingDirection.ASCENDING));
                 }
             }
-            else if (leftStack.getItem() == ModItems.RELIC_FRAGMENT)
-            {
-                callbackInfoReturnable.setReturnValue(
-                    SortingHelper.compareRelicFragments(
-                        leftStack.getTag(),
-                        rightStack.getTag(),
-                        sortingDirection == SortingDirection.ASCENDING));
-            }
-            else if (leftStack.getItem() == ModItems.RESPEC_FLASK)
-            {
-                callbackInfoReturnable.setReturnValue(
-                    SortingHelper.compareRespecFlasks(
-                        leftStack.getTag(),
-                        rightStack.getTag(),
-                        sortingDirection == SortingDirection.ASCENDING));
-            }
-            else if (leftStack.getItem() == ModItems.FACETED_FOCUS)
-            {
-                callbackInfoReturnable.setReturnValue(
-                    SortingHelper.compareFacedFocus(
-                        leftStack.getTag(),
-                        rightStack.getTag(),
-                        sortingDirection == SortingDirection.ASCENDING));
-            }
-            else if (leftStack.getItem() == ModItems.AUGMENT)
-            {
-                callbackInfoReturnable.setReturnValue(
-                    SortingHelper.compareAugments(
-                        leftStack.getTag(),
-                        rightStack.getTag(),
-                        sortingDirection == SortingDirection.ASCENDING));
-            }
             else if (leftStack.getItem() == ModItems.CARD)
             {
-                if (!VaultJewelSorting.CONFIGURATION.getCardSortingByMod().isEmpty())
+                if (!VaultJewelSorting.CONFIGURATION.getCardSortingOptions(Configuration.SortBy.MOD).isEmpty())
                 {
-                    callbackInfoReturnable.setReturnValue(
+                    cir.setReturnValue(
                         SortingHelper.compareCards(leftStack.getDisplayName().getString(),
                             leftStack.getTag(),
                             rightStack.getDisplayName().getString(),
                             rightStack.getTag(),
-                            VaultJewelSorting.CONFIGURATION.getCardSortingByMod(),
+                            VaultJewelSorting.CONFIGURATION.getCardSortingOptions(Configuration.SortBy.MOD),
                             sortingDirection == SortingDirection.ASCENDING));
                 }
             }
-            else if (leftStack.getItem() == ModItems.CARD_DECK)
-            {
-                callbackInfoReturnable.setReturnValue(
-                    SortingHelper.compareDecks(
-                        leftStack.getTag(),
-                        rightStack.getTag(),
-                        sortingDirection == SortingDirection.ASCENDING));
-            }
-            else if (leftStack.getItem() == ModItems.BOOSTER_PACK)
-            {
-                callbackInfoReturnable.setReturnValue(
-                    SortingHelper.compareBoosterPacks(
-                        leftStack.getTag(),
-                        rightStack.getTag(),
-                        sortingDirection == SortingDirection.ASCENDING));
-            }
-            else if (leftStack.getItem() == ModItems.ANTIQUE)
-            {
-                callbackInfoReturnable.setReturnValue(
-                    SortingHelper.compareAntique(
-                        leftStack.getTag(),
-                        rightStack.getTag(),
-                        sortingDirection == SortingDirection.ASCENDING));
-            }
-            else if (leftStack.getItem() == ModItems.JEWEL_POUCH)
-            {
-                callbackInfoReturnable.setReturnValue(
-                    SortingHelper.comparePouches(
-                        leftStack.getTag(),
-                        rightStack.getTag(),
-                        sortingDirection == SortingDirection.ASCENDING));
-            }
-            else if (leftStack.getItem() == ModItems.COMPANION_RELIC)
-            {
-                callbackInfoReturnable.setReturnValue(
-                    SortingHelper.compareCompanionRelics(
-                        leftStack.getTag(),
-                        rightStack.getTag(),
-                        sortingDirection == SortingDirection.ASCENDING));
-
-            }
-            else if (leftStack.getItem() == ModItems.COMPANION_PARTICLE_TRAIL)
-            {
-                callbackInfoReturnable.setReturnValue(
-                    SortingHelper.compareCompanionParticleTrails(
-                        leftStack.getTag(),
-                        rightStack.getTag(),
-                        sortingDirection == SortingDirection.ASCENDING));
-
-            }
-            else if (leftStack.getItem() == ModItems.TEMPORAL_SHARD)
-            {
-                callbackInfoReturnable.setReturnValue( SortingHelper.compareTemporalShards(
-                    leftStack.getTag(),
-                    rightStack.getTag(),
-                    sortingDirection == SortingDirection.ASCENDING));
-
-            }
-            else if (leftStack.getItem() == ModItems.DECK_SOCKET)
-            {
-                callbackInfoReturnable.setReturnValue( SortingHelper.compareDeckSockets(
-                    leftStack.getTag(),
-                    rightStack.getTag(),
-                    sortingDirection == SortingDirection.ASCENDING));
-
+            else {
+                Integer simpleCmpRv = SortingHelper.simpleStackCompare(leftStack, rightStack, sortingDirection == SortingDirection.ASCENDING);
+                if (simpleCmpRv != null)                {
+                    cir.setReturnValue(simpleCmpRv);
+                }
             }
             //TODO:REFACTOR4[TAG]
         }
