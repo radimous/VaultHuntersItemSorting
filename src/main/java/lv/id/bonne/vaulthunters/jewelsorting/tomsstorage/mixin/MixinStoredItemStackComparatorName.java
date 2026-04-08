@@ -143,18 +143,16 @@ public class MixinStoredItemStackComparatorName
         }
         else if (leftStack.getItem() == ModItems.TRINKET)
         {
-            if (!VaultJewelSorting.CONFIGURATION.getTrinketSortingOptions(Configuration.SortBy.NAME).isEmpty())
-            {
-                cir.setReturnValue(
-                    SortingHelper.compareTrinkets(leftStack.getDisplayName().getString(),
-                        AttributeGearData.read(leftStack),
-                        leftStack.getTag(),
-                        rightStack.getDisplayName().getString(),
-                        AttributeGearData.read(rightStack),
-                        rightStack.getTag(),
-                        VaultJewelSorting.CONFIGURATION.getTrinketSortingOptions(Configuration.SortBy.NAME),
-                        !this.reversed));
-            }
+            cir.setReturnValue(
+                SortingHelper.compareTrinkets(leftStack.getDisplayName().getString(),
+                    AttributeGearData.read(leftStack),
+                    leftStack.getTag(),
+                    rightStack.getDisplayName().getString(),
+                    AttributeGearData.read(rightStack),
+                    rightStack.getTag(),
+                    Configuration.SortBy.NAME,
+                    !this.reversed));
+
         }
         else if (SortingHelper.VAULT_CHARMS.contains(leftStack.getItem().getRegistryName()))
         {

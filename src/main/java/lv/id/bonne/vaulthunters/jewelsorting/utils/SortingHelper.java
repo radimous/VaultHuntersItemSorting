@@ -7,7 +7,10 @@
 package lv.id.bonne.vaulthunters.jewelsorting.utils;
 
 
+import iskallia.vault.gear.attribute.VaultGearAttributeInstance;
 import iskallia.vault.item.SigilItem;
+import lv.id.bonne.vaulthunters.jewelsorting.VaultJewelSorting;
+import lv.id.bonne.vaulthunters.jewelsorting.config.Configuration;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -447,6 +450,22 @@ public class SortingHelper
     }
 
 
+    public static int compareTrinkets(
+        ItemStack leftStack,
+        ItemStack rightStack,
+        Configuration.SortBy sortBy,
+        boolean ascending
+    ) {
+        return compareTrinkets(leftStack.getDisplayName().getString(),
+            AttributeGearData.read(leftStack),
+            leftStack.getTag(),
+            rightStack.getDisplayName().getString(),
+            AttributeGearData.read(rightStack),
+            rightStack.getTag(),
+            sortBy,
+            ascending);
+    }
+
     /**
      * This method compares two given vault trinkets by their sorting order.
      * @param leftName the left name
@@ -455,7 +474,7 @@ public class SortingHelper
      * @param rightName the right name
      * @param rightData the right data
      * @param rightTag the right tag
-     * @param sortingOrder the sorting order
+     * @param sortBy the sorting order
      * @param ascending the ascending
      * @return the comparison of two given vault trinkets items.
      */
@@ -465,9 +484,10 @@ public class SortingHelper
         String rightName,
         AttributeGearData rightData,
         CompoundTag rightTag,
-        List<TrinketOptions> sortingOrder,
+        Configuration.SortBy sortBy,
         boolean ascending)
     {
+        List<TrinketOptions> sortingOrder = VaultJewelSorting.CONFIGURATION.getTrinketSortingOptions(sortBy);
         int returnValue = Boolean.compare(isIdentified(leftData), isIdentified(rightData));
 
         if (!isIdentified(leftData) && returnValue == 0)
@@ -485,19 +505,25 @@ public class SortingHelper
                 case USES -> Integer.compare(getRemainingUses(leftTag), getRemainingUses(rightTag));
                 case TYPE ->
                 {
-                    Optional<TrinketEffect<?>> leftValue = leftData.getFirstValue(ModGearAttributes.TRINKET_EFFECT);
-                    Optional<TrinketEffect<?>> rightValue = rightData.getFirstValue(ModGearAttributes.TRINKET_EFFECT);
+                    List<? extends TrinketEffect<?>> leftValue = leftData.getAttributes(ModGearAttributes.TRINKET_EFFECT).map(VaultGearAttributeInstance::getValue).sorted(Comparator.comparing(x -> x.getTrinketConfig().getName())).toList();
+                    List<? extends TrinketEffect<?>> rightValue = rightData.getAttributes(ModGearAttributes.TRINKET_EFFECT).map(VaultGearAttributeInstance::getValue).sorted(Comparator.comparing(x -> x.getTrinketConfig().getName())).toList();
 
-                    if (leftValue.isPresent() && rightValue.isPresent())
+                    if (leftValue.size() != rightValue.size())
                     {
-                        yield SortingHelper.compareString(
-                            leftValue.get().getTrinketConfig().getName(),
-                            rightValue.get().getTrinketConfig().getName());
+                        yield Integer.compare(leftValue.size(), rightValue.size());
                     }
-                    else
+                    for (int j = 0, size = leftValue.size(); i < size; i++)
                     {
-                        yield Boolean.compare(leftValue.isPresent(), rightValue.isPresent());
+                        int compare = SortingHelper.compareString(
+                            leftValue.get(j).getTrinketConfig().getName(),
+                            rightValue.get(j).getTrinketConfig().getName());
+
+                        if (compare != 0)
+                        {
+                            yield compare;
+                        }
                     }
+                    yield 0;
                 }
                 case SLOT ->
                 {
@@ -2201,5 +2227,6 @@ public class SortingHelper
         CUSTOM_SORTING.add(ModItems.COMPANION_RELIC.getRegistryName());
 
         CUSTOM_SORTING.add(ModItems.DECK_SOCKET.getRegistryName());
+        CUSTOM_SORTING.add(ModItems.SIGIL.getRegistryName());
     }
 }

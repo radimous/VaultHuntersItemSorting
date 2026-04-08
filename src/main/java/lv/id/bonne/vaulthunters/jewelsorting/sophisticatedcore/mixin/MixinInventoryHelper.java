@@ -27,112 +27,111 @@ public class MixinInventoryHelper {
     private static Comparator<Map.Entry<ItemStackKey, Integer>> compareJewels(Comparator<Map.Entry<ItemStackKey, Integer>> original) {
             return original.thenComparing((first, second) ->
             {
-                final ItemStack firstStack = first.getKey().getStack();
-                final ItemStack secondStack = second.getKey().getStack();
+                final ItemStack leftStack = first.getKey().getStack();
+                final ItemStack rightStack = second.getKey().getStack();
 
                 int registryOrder = SortingHelper.compareRegistryNames(
-                    firstStack.getItem().getRegistryName(),
-                    secondStack.getItem().getRegistryName(),
+                    leftStack.getItem().getRegistryName(),
+                    rightStack.getItem().getRegistryName(),
                     true);
 
                 if (registryOrder != 0 ||
-                    !SortingHelper.isSortable(firstStack.getItem().getRegistryName())) {
+                    !SortingHelper.isSortable(leftStack.getItem().getRegistryName())) {
                     // Use default string comparing
                     return registryOrder;
-                } else if (firstStack.getItem() == ModItems.JEWEL) {
+                } else if (leftStack.getItem() == ModItems.JEWEL) {
                     return SortingHelper.compareJewels(
-                        firstStack.getDisplayName().getString(),
-                        VaultGearData.read(firstStack),
-                        firstStack.getOrCreateTag().getInt("freeCuts"),
-                        secondStack.getDisplayName().getString(),
-                        VaultGearData.read(secondStack),
-                        secondStack.getOrCreateTag().getInt("freeCuts"),
+                        leftStack.getDisplayName().getString(),
+                        VaultGearData.read(leftStack),
+                        leftStack.getOrCreateTag().getInt("freeCuts"),
+                        rightStack.getDisplayName().getString(),
+                        VaultGearData.read(rightStack),
+                        rightStack.getOrCreateTag().getInt("freeCuts"),
                         VaultJewelSorting.CONFIGURATION.getJewelSortingOptions(Configuration.SortBy.AMOUNT),
                         true);
-                } else if (firstStack.getItem() == ModItems.TOOL) {
+                } else if (leftStack.getItem() == ModItems.TOOL) {
 // TODO: Compare vault tools by their type? Currently is left just to filter out from VaultGearItem
 //                return SortingHelper.compareTools(
 //                    VaultGearData.read(leftStack),
 //                    VaultGearData.read(rightStack),
 //                    true));
-                } else if (SortingHelper.VAULT_GEAR_SET.contains(firstStack.getItem().getRegistryName())) {
+                } else if (SortingHelper.VAULT_GEAR_SET.contains(leftStack.getItem().getRegistryName())) {
                     return SortingHelper.compareVaultGear(
-                        firstStack.getDisplayName().getString(),
-                        VaultGearData.read(firstStack),
-                        secondStack.getDisplayName().getString(),
-                        VaultGearData.read(secondStack),
+                        leftStack.getDisplayName().getString(),
+                        VaultGearData.read(leftStack),
+                        rightStack.getDisplayName().getString(),
+                        VaultGearData.read(rightStack),
                         VaultJewelSorting.CONFIGURATION.getGearSortingOptions(Configuration.SortBy.AMOUNT),
                         true);
-                } else if (firstStack.getItem() == ModItems.INSCRIPTION) {
+                } else if (leftStack.getItem() == ModItems.INSCRIPTION) {
                     return SortingHelper.compareInscriptions(
-                        firstStack.getDisplayName().getString(),
-                        InscriptionData.from(firstStack),
-                        secondStack.getDisplayName().getString(),
-                        InscriptionData.from(secondStack),
+                        leftStack.getDisplayName().getString(),
+                        InscriptionData.from(leftStack),
+                        rightStack.getDisplayName().getString(),
+                        InscriptionData.from(rightStack),
                         VaultJewelSorting.CONFIGURATION.getInscriptionSortingOptions(Configuration.SortBy.AMOUNT),
                         true);
-                } else if (firstStack.getItem() == ModItems.VAULT_CRYSTAL) {
+                } else if (leftStack.getItem() == ModItems.VAULT_CRYSTAL) {
                     if (!VaultJewelSorting.CONFIGURATION.getVaultCrystalSortingOptions(Configuration.SortBy.AMOUNT).isEmpty()) {
                         return SortingHelper.compareVaultCrystals(
-                            firstStack.getDisplayName().getString(),
-                            CrystalData.read(firstStack),
-                            secondStack.getDisplayName().getString(),
-                            CrystalData.read(secondStack),
+                            leftStack.getDisplayName().getString(),
+                            CrystalData.read(leftStack),
+                            rightStack.getDisplayName().getString(),
+                            CrystalData.read(rightStack),
                             VaultJewelSorting.CONFIGURATION.getVaultCrystalSortingOptions(Configuration.SortBy.AMOUNT),
                             true);
                     }
-                } else if (firstStack.getItem() == ModItems.TRINKET) {
-                    if (!VaultJewelSorting.CONFIGURATION.getTrinketSortingOptions(Configuration.SortBy.AMOUNT).isEmpty()) {
-                        return SortingHelper.compareTrinkets(firstStack.getDisplayName().getString(),
-                            AttributeGearData.read(firstStack),
-                            firstStack.getTag(),
-                            secondStack.getDisplayName().getString(),
-                            AttributeGearData.read(secondStack),
-                            secondStack.getTag(),
-                            VaultJewelSorting.CONFIGURATION.getTrinketSortingOptions(Configuration.SortBy.AMOUNT),
-                            true);
-                    }
-                } else if (SortingHelper.VAULT_CHARMS.contains(firstStack.getItem().getRegistryName())) {
+                } else if (leftStack.getItem() == ModItems.TRINKET) {
+                    return SortingHelper.compareTrinkets(leftStack.getDisplayName().getString(),
+                        AttributeGearData.read(leftStack),
+                        leftStack.getTag(),
+                        rightStack.getDisplayName().getString(),
+                        AttributeGearData.read(rightStack),
+                        rightStack.getTag(),
+                        Configuration.SortBy.AMOUNT,
+                        true);
+
+                } else if (SortingHelper.VAULT_CHARMS.contains(leftStack.getItem().getRegistryName())) {
                     if (!VaultJewelSorting.CONFIGURATION.getCharmSortingOptions(Configuration.SortBy.AMOUNT).isEmpty()) {
-                        return SortingHelper.compareCharms(firstStack.getDisplayName().getString(),
-                            AttributeGearData.read(firstStack),
-                            firstStack.getTag(),
-                            secondStack.getDisplayName().getString(),
-                            AttributeGearData.read(secondStack),
-                            secondStack.getTag(),
+                        return SortingHelper.compareCharms(leftStack.getDisplayName().getString(),
+                            AttributeGearData.read(leftStack),
+                            leftStack.getTag(),
+                            rightStack.getDisplayName().getString(),
+                            AttributeGearData.read(rightStack),
+                            rightStack.getTag(),
                             VaultJewelSorting.CONFIGURATION.getCharmSortingOptions(Configuration.SortBy.AMOUNT),
                             true);
                     }
-                } else if (firstStack.getItem() == ModItems.VAULT_CATALYST_INFUSED) {
+                } else if (leftStack.getItem() == ModItems.VAULT_CATALYST_INFUSED) {
                     if (!VaultJewelSorting.CONFIGURATION.getCatalystSortingOptions(Configuration.SortBy.AMOUNT).isEmpty()) {
                         return SortingHelper.compareCatalysts(
-                            firstStack.getDisplayName().getString(),
-                            firstStack.getTag(),
-                            secondStack.getDisplayName().getString(),
-                            secondStack.getTag(),
+                            leftStack.getDisplayName().getString(),
+                            leftStack.getTag(),
+                            rightStack.getDisplayName().getString(),
+                            rightStack.getTag(),
                             VaultJewelSorting.CONFIGURATION.getCatalystSortingOptions(Configuration.SortBy.AMOUNT),
                             true);
                     }
-                } else if (firstStack.getItem() == ModItems.VAULT_DOLL) {
+                } else if (leftStack.getItem() == ModItems.VAULT_DOLL) {
                     if (!VaultJewelSorting.CONFIGURATION.getDollSortingOptions(Configuration.SortBy.AMOUNT).isEmpty()) {
-                        return SortingHelper.compareVaultDolls(firstStack.getDisplayName().getString(),
-                            firstStack.getTag(),
-                            secondStack.getDisplayName().getString(),
-                            secondStack.getTag(),
+                        return SortingHelper.compareVaultDolls(leftStack.getDisplayName().getString(),
+                            leftStack.getTag(),
+                            rightStack.getDisplayName().getString(),
+                            rightStack.getTag(),
                             VaultJewelSorting.CONFIGURATION.getDollSortingOptions(Configuration.SortBy.AMOUNT),
                             true);
                     }
-                } else if (firstStack.getItem() == ModItems.CARD) {
+                } else if (leftStack.getItem() == ModItems.CARD) {
                     if (!VaultJewelSorting.CONFIGURATION.getCardSortingOptions(Configuration.SortBy.AMOUNT).isEmpty()) {
-                        return SortingHelper.compareCards(firstStack.getDisplayName().getString(),
-                            firstStack.getTag(),
-                            secondStack.getDisplayName().getString(),
-                            secondStack.getTag(),
+                        return SortingHelper.compareCards(leftStack.getDisplayName().getString(),
+                            leftStack.getTag(),
+                            rightStack.getDisplayName().getString(),
+                            rightStack.getTag(),
                             VaultJewelSorting.CONFIGURATION.getCardSortingOptions(Configuration.SortBy.AMOUNT),
                             true);
                     }
                 } else {
-                    Integer simpleCmpRv = SortingHelper.simpleStackCompare(firstStack, secondStack, true);
+                    Integer simpleCmpRv = SortingHelper.simpleStackCompare(leftStack, rightStack, true);
                     if (simpleCmpRv != null) {
                         return simpleCmpRv;
                     }

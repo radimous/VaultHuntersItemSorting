@@ -10,7 +10,6 @@ package lv.id.bonne.vaulthunters.jewelsorting.ae2.mixin;
 import lv.id.bonne.vaulthunters.jewelsorting.config.Configuration;
 import net.minecraft.world.item.Item;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -71,9 +70,6 @@ public abstract class MixinRepo
                 return leftWhat == null ? 1 : -1;
             }
 
-            String leftName = leftWhat.getDisplayName().getString();
-            String rightName = rightWhat.getDisplayName().getString();
-
             if (!leftWhat.getModId().equals(rightWhat.getModId()))
             {
                 // some small cleanup. We want to sort only vault items.
@@ -96,7 +92,7 @@ public abstract class MixinRepo
                 ascending);
 
 
-            if (registryOrder != 0 || !SortingHelper.isSortable(leftId))
+            if (registryOrder != 0 || !SortingHelper.isSortable(leftId) || leftTag == null || rightTag == null)
             {
                 // Use default string comparing
                 return registryOrder;
@@ -125,10 +121,10 @@ public abstract class MixinRepo
                     VaultGearData leftData = CustomVaultGearData.read(leftTag);
                     VaultGearData rightData = CustomVaultGearData.read(rightTag);
 
-                    return SortingHelper.compareJewels(leftName,
+                    return SortingHelper.compareJewels(leftWhat.getDisplayName().getString(),
                             leftData,
                             leftTag.getInt("freeCuts"),
-                            rightName,
+                            rightWhat.getDisplayName().getString(),
                             rightData,
                             rightTag.getInt("freeCuts"),
                             VaultJewelSorting.CONFIGURATION.getJewelSortingOptions(sortBy),
@@ -136,10 +132,10 @@ public abstract class MixinRepo
                 }
                 else
                 {
-                    return SortingHelper.compareJewels(leftName,
+                    return SortingHelper.compareJewels(leftWhat.getDisplayName().getString(),
                             leftTag.getCompound("clientCache"),
                             leftTag.getInt("freeCuts"),
-                            rightName,
+                            rightWhat.getDisplayName().getString(),
                             rightTag.getCompound("clientCache"),
                             rightTag.getInt("freeCuts"),
                             VaultJewelSorting.CONFIGURATION.getJewelSortingOptions(sortBy),
@@ -149,14 +145,14 @@ public abstract class MixinRepo
             else if (leftId == ModItems.INSCRIPTION.getRegistryName())
             {
                 InscriptionData leftData = InscriptionData.empty();
-                leftData.deserializeNBT(leftWhat.getTag().getCompound("data"));
+                leftData.deserializeNBT(leftTag.getCompound("data"));
 
                 InscriptionData rightData = InscriptionData.empty();
-                rightData.deserializeNBT(rightWhat.getTag().getCompound("data"));
+                rightData.deserializeNBT(rightTag.getCompound("data"));
 
-                return SortingHelper.compareInscriptions(leftName,
+                return SortingHelper.compareInscriptions(leftWhat.getDisplayName().getString(),
                         leftData,
-                        rightName,
+                        rightWhat.getDisplayName().getString(),
                         rightData,
                         VaultJewelSorting.CONFIGURATION.getInscriptionSortingOptions(sortBy),
                         ascending);
@@ -164,71 +160,71 @@ public abstract class MixinRepo
             else if (leftId == ModItems.VAULT_CRYSTAL.getRegistryName())
             {
                 CrystalData leftData = CrystalData.empty();
-                leftData.readNbt(leftWhat.getTag().getCompound("CrystalData"));
+                leftData.readNbt(leftTag.getCompound("CrystalData"));
 
                 CrystalData rightData = CrystalData.empty();
-                rightData.readNbt(rightWhat.getTag().getCompound("CrystalData"));
+                rightData.readNbt(rightTag.getCompound("CrystalData"));
 
-                return SortingHelper.compareVaultCrystals(leftName,
+                return SortingHelper.compareVaultCrystals(leftWhat.getDisplayName().getString(),
                         leftData,
-                        rightName,
+                        rightWhat.getDisplayName().getString(),
                         rightData,
                         VaultJewelSorting.CONFIGURATION.getVaultCrystalSortingOptions(sortBy),
                         ascending);
             }
             else if (leftId == ModItems.TRINKET.getRegistryName())
             {
-                AttributeGearData leftData = CustomVaultGearData.read(leftWhat.getTag());
-                AttributeGearData rightData = CustomVaultGearData.read(rightWhat.getTag());
+                AttributeGearData leftData = CustomVaultGearData.read(leftTag);
+                AttributeGearData rightData = CustomVaultGearData.read(rightTag);
 
-                return SortingHelper.compareTrinkets(leftName,
+                return SortingHelper.compareTrinkets(leftWhat.getDisplayName().getString(),
                         leftData,
-                        leftWhat.getTag(),
-                        rightName,
+                        leftTag,
+                        rightWhat.getDisplayName().getString(),
                         rightData,
-                        rightWhat.getTag(),
-                        VaultJewelSorting.CONFIGURATION.getTrinketSortingOptions(sortBy),
+                        rightTag,
+                        sortBy,
                         ascending);
             }
             else if (SortingHelper.VAULT_CHARMS.contains(leftId))
             {
-                AttributeGearData leftData = CustomVaultGearData.read(leftWhat.getTag());
-                AttributeGearData rightData = CustomVaultGearData.read(rightWhat.getTag());
+                AttributeGearData leftData = CustomVaultGearData.read(leftTag);
+                AttributeGearData rightData = CustomVaultGearData.read(rightTag);
 
-                return SortingHelper.compareCharms(leftName,
+                return SortingHelper.compareCharms(leftWhat.getDisplayName().getString(),
                         leftData,
-                        leftWhat.getTag(),
-                        rightName,
+                        leftTag,
+                        rightWhat.getDisplayName().getString(),
                         rightData,
-                        rightWhat.getTag(),
+                        rightTag,
                         VaultJewelSorting.CONFIGURATION.getCharmSortingOptions(sortBy),
                         ascending);
             }
             else if (leftId == ModItems.VAULT_CATALYST_INFUSED.getRegistryName())
             {
-                return SortingHelper.compareCatalysts(leftName,
-                        leftWhat.getTag(),
-                        rightName,
-                        rightWhat.getTag(),
+                return SortingHelper.compareCatalysts(leftWhat.getDisplayName().getString(),
+                        leftTag,
+                        rightWhat.getDisplayName().getString(),
+                        rightTag,
                         VaultJewelSorting.CONFIGURATION.getCatalystSortingOptions(sortBy),
                         ascending);
             }
             else if (leftId == ModItems.VAULT_DOLL.getRegistryName())
             {
-                return SortingHelper.compareVaultDolls(leftName,
-                        leftWhat.getTag(),
-                        rightName,
-                        rightWhat.getTag(),
+                return SortingHelper.compareVaultDolls(leftWhat.getDisplayName().getString(),
+                        leftTag,
+                        rightWhat.getDisplayName().getString(),
+                        rightTag,
                         VaultJewelSorting.CONFIGURATION.getDollSortingOptions(sortBy),
                         ascending);
             }
 
             else if (leftId == ModItems.CARD.getRegistryName())
             {
-                return SortingHelper.compareCards(leftName,
-                        leftWhat.getTag(),
-                        rightName,
-                        rightWhat.getTag(),
+                return SortingHelper.compareCards(leftWhat.getDisplayName().getString(),
+                        leftTag,
+                        rightWhat.getDisplayName().getString(),
+                        rightTag,
                         VaultJewelSorting.CONFIGURATION.getCardSortingOptions(sortBy),
                         ascending);
             }
@@ -236,11 +232,11 @@ public abstract class MixinRepo
             else
             {
                 if (CustomVaultGearData.hasVaultGearData(leftTag) && CustomVaultGearData.hasVaultGearData(rightTag)) {
-                    VaultGearData leftData = CustomVaultGearData.read(leftWhat.getTag());
-                    VaultGearData rightData = CustomVaultGearData.read(rightWhat.getTag());
-                    return SortingHelper.compareVaultGear(leftName,
+                    VaultGearData leftData = CustomVaultGearData.read(leftTag);
+                    VaultGearData rightData = CustomVaultGearData.read(rightTag);
+                    return SortingHelper.compareVaultGear(leftWhat.getDisplayName().getString(),
                             leftData,
-                            rightName,
+                            rightWhat.getDisplayName().getString(),
                             rightData,
                             VaultJewelSorting.CONFIGURATION.getGearSortingOptions(sortBy),
                             ascending);
