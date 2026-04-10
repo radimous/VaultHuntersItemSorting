@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import lv.id.bonne.vaulthunters.jewelsorting.VaultJewelSorting;
 import lv.id.bonne.vaulthunters.jewelsorting.utils.SortingHelper;
 import net.minecraftforge.common.ForgeConfigSpec;
 
@@ -348,6 +349,7 @@ public class Configuration
         builder.pop();
 
         Configuration.GENERAL_SPEC = builder.build();
+        this.refreshCache();
     }
 
     public enum SortBy
@@ -367,9 +369,9 @@ public class Configuration
     {
         return switch (sortBy)
         {
-            case NAME -> this.convertStringToJewelEnum(this.jewelSortingByName.get());
-            case AMOUNT -> this.convertStringToJewelEnum(this.jewelSortingByAmount.get());
-            case MOD -> this.convertStringToJewelEnum(this.jewelSortingByMod.get());
+            case NAME -> this.jewelSortingByNameCache;
+            case AMOUNT -> this.jewelSortingByAmountCache;
+            case MOD -> this.jewelSortingByModCache;
         };
     }
 
@@ -383,9 +385,9 @@ public class Configuration
     {
         return switch (sortBy)
         {
-            case NAME -> this.convertStringToGearEnum(this.gearSortingByName.get());
-            case AMOUNT -> this.convertStringToGearEnum(this.gearSortingByAmount.get());
-            case MOD -> this.convertStringToGearEnum(this.gearSortingByMod.get());
+            case NAME -> this.gearSortingByNameCache;
+            case AMOUNT -> this.gearSortingByAmountCache;
+            case MOD -> this.gearSortingByModCache;
         };
     }
 
@@ -405,9 +407,9 @@ public class Configuration
     {
         return switch (sortBy)
         {
-            case NAME -> this.convertStringToInscriptionEnum(this.inscriptionSortingByName.get());
-            case AMOUNT -> this.convertStringToInscriptionEnum(this.inscriptionSortingByAmount.get());
-            case MOD -> this.convertStringToInscriptionEnum(this.inscriptionSortingByMod.get());
+            case NAME -> this.inscriptionSortingByNameCache;
+            case AMOUNT -> this.inscriptionSortingByAmountCache;
+            case MOD -> this.inscriptionSortingByModCache;
         };
     }
 
@@ -415,9 +417,9 @@ public class Configuration
     {
         return switch (sortBy)
         {
-            case NAME -> this.convertStringToCrystalEnum(this.vaultCrystalSortingByName.get());
-            case AMOUNT -> this.convertStringToCrystalEnum(this.vaultCrystalSortingByAmount.get());
-            case MOD -> this.convertStringToCrystalEnum(this.vaultCrystalSortingByMod.get());
+            case NAME -> this.vaultCrystalSortingByNameCache;
+            case AMOUNT -> this.vaultCrystalSortingByAmountCache;
+            case MOD -> this.vaultCrystalSortingByModCache;
         };
     }
 
@@ -425,9 +427,9 @@ public class Configuration
     {
         return switch (sortBy)
         {
-            case NAME -> this.convertStringToTrinketEnum(this.trinketSortingByName.get());
-            case AMOUNT -> this.convertStringToTrinketEnum(this.trinketSortingByAmount.get());
-            case MOD -> this.convertStringToTrinketEnum(this.trinketSortingByMod.get());
+            case NAME -> this.trinketSortingByNameCache;
+            case AMOUNT -> this.trinketSortingByAmountCache;
+            case MOD -> this.trinketSortingByModCache;
         };
     }
 
@@ -435,9 +437,9 @@ public class Configuration
     {
         return switch (sortBy)
         {
-            case NAME -> this.convertStringToDollEnum(this.dollSortingByName.get());
-            case AMOUNT -> this.convertStringToDollEnum(this.dollSortingByAmount.get());
-            case MOD -> this.convertStringToDollEnum(this.dollSortingByMod.get());
+            case NAME -> this.dollSortingByNameCache;
+            case AMOUNT -> this.dollSortingByAmountCache;
+            case MOD -> this.dollSortingByModCache;
         };
     }
 
@@ -445,9 +447,9 @@ public class Configuration
     {
         return switch (sortBy)
         {
-            case NAME -> this.convertStringToCharmEnum(this.charmSortingByName.get());
-            case AMOUNT -> this.convertStringToCharmEnum(this.charmSortingByAmount.get());
-            case MOD -> this.convertStringToCharmEnum(this.charmSortingByMod.get());
+            case NAME -> this.charmSortingByNameCache;
+            case AMOUNT -> this.charmSortingByAmountCache;
+            case MOD -> this.charmSortingByModCache;
         };
     }
 
@@ -455,9 +457,9 @@ public class Configuration
     {
         return switch (sortBy)
         {
-            case NAME -> this.convertStringToCatalystEnum(this.catalystSortingByName.get());
-            case AMOUNT -> this.convertStringToCatalystEnum(this.catalystSortingByAmount.get());
-            case MOD -> this.convertStringToCatalystEnum(this.catalystSortingByMod.get());
+            case NAME -> this.catalystSortingByNameCache;
+            case AMOUNT -> this.catalystSortingByAmountCache;
+            case MOD -> this.catalystSortingByModCache;
         };
     }
 
@@ -465,9 +467,9 @@ public class Configuration
     {
         return switch (sortBy)
         {
-            case NAME -> this.convertStringToCardEnum(this.cardSortingByName.get());
-            case AMOUNT -> this.convertStringToCardEnum(this.cardSortingByAmount.get());
-            case MOD -> this.convertStringToCardEnum(this.cardSortingByMod.get());
+            case NAME -> this.cardSortingByNameCache;
+            case AMOUNT -> this.cardSortingByAmountCache;
+            case MOD -> this.cardSortingByModCache;
         };
     }
 
@@ -614,6 +616,101 @@ public class Configuration
             toList();
     }
 
+
+    private List<SortingHelper.JewelOptions> jewelSortingByNameCache;
+    private List<SortingHelper.JewelOptions> jewelSortingByAmountCache;
+    private List<SortingHelper.JewelOptions> jewelSortingByModCache;
+
+    private List<SortingHelper.GearOptions> gearSortingByNameCache;
+    private List<SortingHelper.GearOptions> gearSortingByAmountCache;
+    private List<SortingHelper.GearOptions> gearSortingByModCache;
+
+    private List<SortingHelper.InscriptionOptions> inscriptionSortingByNameCache;
+    private List<SortingHelper.InscriptionOptions> inscriptionSortingByAmountCache;
+    private List<SortingHelper.InscriptionOptions> inscriptionSortingByModCache;
+
+    private List<SortingHelper.CrystalOptions> vaultCrystalSortingByNameCache;
+    private List<SortingHelper.CrystalOptions> vaultCrystalSortingByAmountCache;
+    private List<SortingHelper.CrystalOptions> vaultCrystalSortingByModCache;
+
+    private List<SortingHelper.TrinketOptions> trinketSortingByNameCache;
+    private List<SortingHelper.TrinketOptions> trinketSortingByAmountCache;
+    private List<SortingHelper.TrinketOptions> trinketSortingByModCache;
+
+    private List<SortingHelper.DollOptions> dollSortingByNameCache;
+    private List<SortingHelper.DollOptions> dollSortingByAmountCache;
+    private List<SortingHelper.DollOptions> dollSortingByModCache;
+
+    private List<SortingHelper.CharmOptions> charmSortingByNameCache;
+    private List<SortingHelper.CharmOptions> charmSortingByAmountCache;
+    private List<SortingHelper.CharmOptions> charmSortingByModCache;
+
+    private List<SortingHelper.CatalystOptions> catalystSortingByNameCache;
+    private List<SortingHelper.CatalystOptions> catalystSortingByAmountCache;
+    private List<SortingHelper.CatalystOptions> catalystSortingByModCache;
+
+    private List<SortingHelper.CardOptions> cardSortingByNameCache;
+    private List<SortingHelper.CardOptions> cardSortingByAmountCache;
+    private List<SortingHelper.CardOptions> cardSortingByModCache;
+
+    public void refreshCache()
+    {
+        this.jewelSortingByNameCache = convertStringToJewelEnum(jewelSortingByName.get());
+        this.jewelSortingByAmountCache = convertStringToJewelEnum(jewelSortingByAmount.get());
+        if (jewelSortingByAmountCache.isEmpty()) {jewelSortingByAmountCache = List.copyOf(jewelSortingByNameCache);}
+        this.jewelSortingByModCache = convertStringToJewelEnum(jewelSortingByMod.get());
+        if (jewelSortingByModCache.isEmpty()) {jewelSortingByModCache = List.copyOf(jewelSortingByNameCache);}
+
+        this.gearSortingByNameCache = convertStringToGearEnum(gearSortingByName.get());
+        this.gearSortingByAmountCache = convertStringToGearEnum(gearSortingByAmount.get());
+        if (gearSortingByAmountCache.isEmpty()) {gearSortingByAmountCache = List.copyOf(gearSortingByNameCache);}
+        this.gearSortingByModCache = convertStringToGearEnum(gearSortingByMod.get());
+        if (gearSortingByModCache.isEmpty()) {gearSortingByModCache = List.copyOf(gearSortingByNameCache);}
+
+        this.inscriptionSortingByNameCache = convertStringToInscriptionEnum(inscriptionSortingByName.get());
+        this.inscriptionSortingByAmountCache = convertStringToInscriptionEnum(inscriptionSortingByAmount.get());
+        if (inscriptionSortingByAmountCache.isEmpty()) {inscriptionSortingByAmountCache = List.copyOf(inscriptionSortingByNameCache);}
+        this.inscriptionSortingByModCache = convertStringToInscriptionEnum(inscriptionSortingByMod.get());
+        if (inscriptionSortingByModCache.isEmpty()) {inscriptionSortingByModCache = List.copyOf(inscriptionSortingByNameCache);}
+
+        this.vaultCrystalSortingByNameCache = convertStringToCrystalEnum(vaultCrystalSortingByName.get());
+        this.vaultCrystalSortingByAmountCache = convertStringToCrystalEnum(vaultCrystalSortingByAmount.get());
+        if (vaultCrystalSortingByAmountCache.isEmpty()) {vaultCrystalSortingByAmountCache = List.copyOf(vaultCrystalSortingByNameCache);}
+        this.vaultCrystalSortingByModCache = convertStringToCrystalEnum(vaultCrystalSortingByMod.get());
+        if (vaultCrystalSortingByModCache.isEmpty()) {vaultCrystalSortingByModCache = List.copyOf(vaultCrystalSortingByNameCache);}
+
+        this.trinketSortingByNameCache = convertStringToTrinketEnum(trinketSortingByName.get());
+        this.trinketSortingByAmountCache = convertStringToTrinketEnum(trinketSortingByAmount.get());
+        if (trinketSortingByAmountCache.isEmpty()) {trinketSortingByAmountCache = List.copyOf(trinketSortingByNameCache);}
+        this.trinketSortingByModCache = convertStringToTrinketEnum(trinketSortingByMod.get());
+        if (trinketSortingByModCache.isEmpty()) {trinketSortingByModCache = List.copyOf(trinketSortingByNameCache);}
+
+        this.dollSortingByNameCache = convertStringToDollEnum(dollSortingByName.get());
+        this.dollSortingByAmountCache = convertStringToDollEnum(dollSortingByAmount.get());
+        if (dollSortingByAmountCache.isEmpty()) {dollSortingByAmountCache = List.copyOf(dollSortingByNameCache);}
+        this.dollSortingByModCache = convertStringToDollEnum(dollSortingByMod.get());
+        if (dollSortingByModCache.isEmpty()) {dollSortingByModCache = List.copyOf(dollSortingByNameCache);}
+
+        this.charmSortingByNameCache = convertStringToCharmEnum(charmSortingByName.get());
+        this.charmSortingByAmountCache = convertStringToCharmEnum(charmSortingByAmount.get());
+        if (charmSortingByAmountCache.isEmpty()) {charmSortingByAmountCache = List.copyOf(charmSortingByNameCache);}
+        this.charmSortingByModCache = convertStringToCharmEnum(charmSortingByMod.get());
+        if (charmSortingByModCache.isEmpty()) {charmSortingByModCache = List.copyOf(charmSortingByNameCache);}
+
+        this.catalystSortingByNameCache = convertStringToCatalystEnum(catalystSortingByName.get());
+        this.catalystSortingByAmountCache = convertStringToCatalystEnum(catalystSortingByAmount.get());
+        if (catalystSortingByAmountCache.isEmpty()) {catalystSortingByAmountCache = List.copyOf(catalystSortingByNameCache);}
+        this.catalystSortingByModCache = convertStringToCatalystEnum(catalystSortingByMod.get());
+        if (catalystSortingByModCache.isEmpty()) {catalystSortingByModCache = List.copyOf(catalystSortingByNameCache);}
+
+        this.cardSortingByNameCache = convertStringToCardEnum(cardSortingByName.get());
+        this.cardSortingByAmountCache = convertStringToCardEnum(cardSortingByAmount.get());
+        if (cardSortingByAmountCache.isEmpty()) {cardSortingByAmountCache = List.copyOf(cardSortingByNameCache);}
+        this.cardSortingByModCache = convertStringToCardEnum(cardSortingByMod.get());
+        if (cardSortingByModCache.isEmpty()) {cardSortingByModCache = List.copyOf(cardSortingByNameCache);}
+
+        VaultJewelSorting.LOGGER.info("Config cache refreshed");
+    }
 
 // ---------------------------------------------------------------------
 // Section: Variables
