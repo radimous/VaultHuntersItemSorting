@@ -32,7 +32,7 @@ public interface InvokerGearDataCache
      * @return The value of the cache.
      */
     @Invoker(value = "queryIntCache", remap = false)
-    public Integer callQueryIntCache(String key, int defaultValue, Function<ItemStack, Integer> cacheInit);
+    Integer callQueryIntCache(String key, int defaultValue, Function<ItemStack, Integer> cacheInit);
 
 
     /**
@@ -48,7 +48,7 @@ public interface InvokerGearDataCache
      * @return The value of the cache.
      */
     @Invoker(value = "queryCache", remap = false)
-    public <R, T> T callQueryCache(String key, Function<Tag, R> cacheRead, Function<R, Tag> cacheWrite, T cacheMissDefault, Function<R, T> cacheHitTransform, Function<ItemStack, R> cacheInit);
+    <R, T> T callQueryCache(String key, Function<Tag, R> cacheRead, Function<R, Tag> cacheWrite, T cacheMissDefault, Function<R, T> cacheHitTransform, Function<ItemStack, R> cacheInit);
 
 
     /**
@@ -56,5 +56,5 @@ public interface InvokerGearDataCache
      * @return The cache tag.
      */
     @Invoker(value = "cacheTag", remap = false)
-    public CompoundTag callCacheTag();
+    CompoundTag callCacheTag();
 }

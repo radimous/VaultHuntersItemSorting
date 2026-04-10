@@ -7,21 +7,12 @@
 package lv.id.bonne.vaulthunters.jewelsorting.utils;
 
 
-import iskallia.vault.gear.attribute.VaultGearAttributeInstance;
-import iskallia.vault.item.SigilItem;
-import lv.id.bonne.vaulthunters.jewelsorting.VaultJewelSorting;
-import lv.id.bonne.vaulthunters.jewelsorting.config.Configuration;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
-import java.util.*;
-
 import iskallia.vault.VaultMod;
 import iskallia.vault.core.card.Card;
 import iskallia.vault.core.card.CardEntry;
 import iskallia.vault.gear.VaultGearState;
 import iskallia.vault.gear.attribute.VaultGearAttribute;
+import iskallia.vault.gear.attribute.VaultGearAttributeInstance;
 import iskallia.vault.gear.attribute.VaultGearModifier;
 import iskallia.vault.gear.data.AttributeGearData;
 import iskallia.vault.gear.data.GearDataCache;
@@ -29,12 +20,21 @@ import iskallia.vault.gear.data.VaultGearData;
 import iskallia.vault.gear.trinket.TrinketEffect;
 import iskallia.vault.init.ModGearAttributes;
 import iskallia.vault.init.ModItems;
+import iskallia.vault.item.SigilItem;
 import iskallia.vault.item.crystal.CrystalData;
 import iskallia.vault.item.data.InscriptionData;
+import lv.id.bonne.vaulthunters.jewelsorting.VaultJewelSorting;
+import lv.id.bonne.vaulthunters.jewelsorting.config.Configuration;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
 
 
 /**
@@ -386,56 +386,6 @@ public class SortingHelper
                 case ATTRIBUTE_WEIGHT -> SortingHelper.compareAttributeValueWeight(leftExtraCache, rightExtraCache);
                 case LEVEL -> SortingHelper.compareIntegerValue(leftExtraCache.getExtraGearLevel(),
                     rightExtraCache.getExtraGearLevel());
-                case CUTS -> 0;
-            };
-        }
-
-        return ascending ? returnValue : -returnValue;
-    }
-
-
-    /**
-     * This method compares two given jewels by their sorting order.
-     *
-     * @param leftName the left name
-     * @param leftData the left data
-     * @param rightName the right name
-     * @param rightData the right data
-     * @param sortBy the sorting order
-     * @param ascending the ascending
-     * @return the comparison of two given jewels.
-     */
-    private static int compareJewels(
-        String leftName,
-        CompoundTag leftData,
-        String rightName,
-        CompoundTag rightData,
-        Configuration.SortBy sortBy,
-        boolean ascending)
-    {
-        List<JewelOptions> sortingOrder = VaultJewelSorting.CONFIGURATION.getJewelSortingOptions(sortBy);
-        int returnValue = 0;
-        for (int i = 0, sortingOrderSize = sortingOrder.size(); returnValue == 0 && i < sortingOrderSize; i++)
-        {
-            JewelOptions sortOptions = sortingOrder.get(i);
-
-            returnValue = switch (sortOptions) {
-                case NAME -> SortingHelper.compareString(leftName, rightName);
-                case ATTRIBUTE -> SortingHelper.compareIntegerValue(leftData.getInt(EXTRA_ATTRIBUTE_INDEX),
-                    rightData.getInt(EXTRA_ATTRIBUTE_INDEX));
-                case ATTRIBUTE_VALUE -> SortingHelper.compareDoubleValue(leftData.getDouble(EXTRA_ATTRIBUTE_VALUE),
-                    rightData.getDouble(EXTRA_ATTRIBUTE_VALUE));
-                case SIZE -> SortingHelper.compareIntegerValue(leftData.getInt(EXTRA_JEWEL_SIZE),
-                    rightData.getInt(EXTRA_JEWEL_SIZE));
-                case ATTRIBUTE_WEIGHT ->
-                {
-                    double leftWeight = leftData.getDouble(EXTRA_ATTRIBUTE_VALUE) / leftData.getInt(EXTRA_JEWEL_SIZE);
-                    double rightWeight = rightData.getDouble(EXTRA_ATTRIBUTE_VALUE) / rightData.getInt(EXTRA_JEWEL_SIZE);
-
-                    yield SortingHelper.compareDoubleValue(leftWeight, rightWeight);
-                }
-                case LEVEL -> SortingHelper.compareIntegerValue(leftData.getInt(EXTRA_GEAR_LEVEL),
-                    rightData.getInt(EXTRA_GEAR_LEVEL));
                 case CUTS -> 0;
             };
         }

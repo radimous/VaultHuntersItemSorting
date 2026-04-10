@@ -8,29 +8,19 @@ package lv.id.bonne.vaulthunters.jewelsorting.qio.mixin;
 
 
 import lv.id.bonne.vaulthunters.jewelsorting.config.Configuration;
-import org.objectweb.asm.Opcodes;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
-import java.util.Comparator;
-import java.util.Objects;
-
-import iskallia.vault.gear.data.AttributeGearData;
-import iskallia.vault.gear.data.GearDataCache;
-import iskallia.vault.gear.data.VaultGearData;
-import iskallia.vault.init.ModItems;
-import iskallia.vault.item.crystal.CrystalData;
-import iskallia.vault.item.data.InscriptionData;
-import lv.id.bonne.vaulthunters.jewelsorting.VaultJewelSorting;
-import lv.id.bonne.vaulthunters.jewelsorting.utils.IExtraGearDataCache;
 import lv.id.bonne.vaulthunters.jewelsorting.utils.SortingHelper;
 import mekanism.common.inventory.ISlotClickHandler;
 import mekanism.common.inventory.container.QIOItemViewerContainer;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.ItemStack;
+import org.objectweb.asm.Opcodes;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
+
+import java.util.Comparator;
 
 
 /**
