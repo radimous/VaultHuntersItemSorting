@@ -25,17 +25,6 @@ public class MixinInventorySorter
             final ItemStack leftStack = first.getKey().getStack();
             final ItemStack rightStack = second.getKey().getStack();
 
-            int registryOrder = SortingHelper.compareRegistryNames(
-                leftStack.getItem().getRegistryName(),
-                rightStack.getItem().getRegistryName(),
-                true);
-
-            if (registryOrder != 0 ||
-                !SortingHelper.isSortable(leftStack.getItem().getRegistryName()))
-            {
-                // Use default string comparing
-                return registryOrder;
-            }
             Integer cmpRv = SortingHelper.compareItems(
                 leftStack,
                 rightStack,

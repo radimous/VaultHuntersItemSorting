@@ -78,6 +78,24 @@ public class SortingHelper
                                                  boolean ascending)
     {
 
+        int registryOrder = SortingHelper.compareRegistryNames(
+            leftStack.getItem().getRegistryName(),
+            rightStack.getItem().getRegistryName(),
+            ascending);
+
+        if (registryOrder != 0 ||
+            !SortingHelper.isSortable(leftStack.getItem().getRegistryName())) {
+            return registryOrder;
+        }
+
+        if (leftStack == rightStack ||
+            !leftStack.getItem().equals(rightStack.getItem()) ||
+            !SortingHelper.isSortable(leftStack.getItem().getRegistryName())) {
+            // Leave to original code.
+            return null;
+        }
+
+
         if (leftStack.getItem() == ModItems.JEWEL)
         {
             GearDataCache leftData = GearDataCache.of(leftStack);
@@ -196,6 +214,9 @@ public class SortingHelper
                 sortBy,
                 ascending);
         }
+        if (leftStack.getItem() == ModItems.BOSS_RUNE) {
+            return compareBossRunes(leftStack, rightStack, sortBy, ascending);
+        }
         else
         {
             Integer simpleCmpRv = SortingHelper.simpleStackCompare(leftStack, rightStack, ascending);
@@ -219,9 +240,7 @@ public class SortingHelper
         if (leftStack.getItem() == ModItems.SIGIL) {
             return compareSigils(leftStack, rightStack, ascending);
         }
-        if (leftStack.getItem() == ModItems.BOSS_RUNE) {
-            return compareBossRunes(leftStack, rightStack, ascending);
-        }
+
         return simpleItemAndTagCompare(leftStack.getItem(), leftStack.getTag(), rightStack.getItem(), rightStack.getTag(), ascending);
     }
 
@@ -268,7 +287,7 @@ public class SortingHelper
      * @param ascending The ascending or descending order.
      * @return The comparison of two given registry names.
      */
-    public static int compareRegistryNames(ResourceLocation leftReg,
+    private static int compareRegistryNames(ResourceLocation leftReg,
         ResourceLocation rightReg,
         boolean ascending)
     {
@@ -1950,7 +1969,7 @@ public class SortingHelper
         return returnValue;
     }
 
-    private static int compareBossRunes(ItemStack leftStack, ItemStack rightStack, boolean ascending)
+    private static int compareBossRunes(ItemStack leftStack, ItemStack rightStack, Configuration.SortBy sortBy, boolean ascending)
     {
         List<ItemStack> leftRuneItems = BossRuneItem.getItems(leftStack);
         List<ItemStack> rightRuneItems = BossRuneItem.getItems(rightStack);
@@ -1963,7 +1982,7 @@ public class SortingHelper
         for (int i = 0, size = leftRuneItems.size(); i < size; i++) {
             var leftRuneStack = leftRuneItems.get(i);
             var rightRuneStack = rightRuneItems.get(i);
-            Integer cmpRv = SortingHelper.simpleStackCompare(leftRuneStack, rightRuneStack, ascending);
+            Integer cmpRv = SortingHelper.compareItems(leftRuneStack, rightRuneStack, sortBy, ascending);
             if (cmpRv != null && cmpRv != 0) {
                 return cmpRv;// at least one is different
             }

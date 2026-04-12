@@ -69,17 +69,6 @@ public class MixinQIOItemViewerContainerListSortType
                     stack1.getModID(),
                     stack2.getModID());
             }
-
-            int registryOrder = SortingHelper.compareRegistryNames(
-                leftStack.getItem().getRegistryName(),
-                rightStack.getItem().getRegistryName(),
-                true);
-
-            if (registryOrder != 0 || !SortingHelper.isSortable(leftStack.getItem().getRegistryName()))
-            {
-                // Use default string comparing
-                return registryOrder;
-            }
             else
             {
                 Configuration.SortBy sortBy = switch (instance) {
@@ -120,16 +109,6 @@ public class MixinQIOItemViewerContainerListSortType
                     stack1.getModID());
             }
 
-            int registryOrder = SortingHelper.compareRegistryNames(
-                leftStack.getItem().getRegistryName(),
-                rightStack.getItem().getRegistryName(),
-                false);
-
-            if (registryOrder != 0 || !SortingHelper.isSortable(leftStack.getItem().getRegistryName()))
-            {
-                // Use default string comparing
-                return registryOrder;
-            }
             else
             {
                 Configuration.SortBy sortBy = switch (instance) {
