@@ -8,6 +8,7 @@ package lv.id.bonne.vaulthunters.jewelsorting.utils;
 
 
 import iskallia.vault.VaultMod;
+import iskallia.vault.config.sigil.SigilDefinitionsConfig;
 import iskallia.vault.core.card.Card;
 import iskallia.vault.core.card.CardEntry;
 import iskallia.vault.gear.VaultGearState;
@@ -20,6 +21,7 @@ import iskallia.vault.gear.data.VaultGearData;
 import iskallia.vault.gear.trinket.TrinketEffect;
 import iskallia.vault.init.ModGearAttributes;
 import iskallia.vault.init.ModItems;
+import iskallia.vault.item.BossRuneItem;
 import iskallia.vault.item.SigilItem;
 import iskallia.vault.item.crystal.CrystalData;
 import iskallia.vault.item.data.InscriptionData;
@@ -32,6 +34,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -186,7 +189,6 @@ public class SortingHelper
         }
         else if (leftStack.getItem() == ModItems.CARD)
         {
-
             return SortingHelper.compareCards(leftName,
                 leftStack.getTag(),
                 rightName,
@@ -194,7 +196,6 @@ public class SortingHelper
                 sortBy,
                 ascending);
         }
-
         else
         {
             Integer simpleCmpRv = SortingHelper.simpleStackCompare(leftStack, rightStack, ascending);
@@ -206,7 +207,7 @@ public class SortingHelper
         return null;
     }
 
-    public static @Nullable Integer simpleStackCompare(ItemStack leftStack, ItemStack rightStack, boolean ascending){
+    private static @Nullable Integer simpleStackCompare(ItemStack leftStack, ItemStack rightStack, boolean ascending){
 
         if (leftStack == rightStack ||
             !leftStack.getItem().equals(rightStack.getItem()) ||
@@ -216,16 +217,15 @@ public class SortingHelper
         }
 
         if (leftStack.getItem() == ModItems.SIGIL) {
-            var leftSigilData = SigilItem.readSigil(leftStack).orElse(null);
-            var rightSigilData = SigilItem.readSigil(rightStack).orElse(null);
-            if (leftSigilData != null && rightSigilData != null) {
-                return Float.compare(leftSigilData.getDifficulty(), rightSigilData.getDifficulty());
-            }
+            return compareSigils(leftStack, rightStack, ascending);
+        }
+        if (leftStack.getItem() == ModItems.BOSS_RUNE) {
+            return compareBossRunes(leftStack, rightStack, ascending);
         }
         return simpleItemAndTagCompare(leftStack.getItem(), leftStack.getTag(), rightStack.getItem(), rightStack.getTag(), ascending);
     }
 
-    public static @Nullable Integer simpleItemAndTagCompare(Item leftItem, CompoundTag leftTag, Item rightItem, CompoundTag rightTag, boolean ascending) {
+    private static @Nullable Integer simpleItemAndTagCompare(Item leftItem, CompoundTag leftTag, Item rightItem, CompoundTag rightTag, boolean ascending) {
         if (!leftItem.equals(rightItem) ||
             !SortingHelper.isSortable(leftItem.getRegistryName())) {
             // Leave to original code.
@@ -1950,6 +1950,57 @@ public class SortingHelper
         return returnValue;
     }
 
+    private static int compareBossRunes(ItemStack leftStack, ItemStack rightStack, boolean ascending)
+    {
+        List<ItemStack> leftRuneItems = BossRuneItem.getItems(leftStack);
+        List<ItemStack> rightRuneItems = BossRuneItem.getItems(rightStack);
+        leftRuneItems.sort(Comparator.comparing(x -> Objects.requireNonNullElse(x.getItem().getRegistryName(), Items.AIR.getRegistryName()).toString()));
+        rightRuneItems.sort(Comparator.comparing(x -> Objects.requireNonNullElse(x.getItem().getRegistryName(), Items.AIR.getRegistryName()).toString()));
+        if (leftRuneItems.size() != rightRuneItems.size()) {
+            return (ascending ? 1 : -1) * Integer.compare(leftRuneItems.size(), rightRuneItems.size());
+        }
+        Integer lastCmpRv = null;
+        for (int i = 0, size = leftRuneItems.size(); i < size; i++) {
+            var leftRuneStack = leftRuneItems.get(i);
+            var rightRuneStack = rightRuneItems.get(i);
+            Integer cmpRv = SortingHelper.simpleStackCompare(leftRuneStack, rightRuneStack, ascending);
+            if (cmpRv != null && cmpRv != 0) {
+                return cmpRv;// at least one is different
+            }
+            if (cmpRv != null) {
+                lastCmpRv = cmpRv;
+            }
+        }
+        if (lastCmpRv != null) {
+            int cmp = compareString(BossRuneItem.getModifier(leftStack), BossRuneItem.getModifier(rightStack));
+            if (cmp != 0) {
+                return ascending ? cmp : -cmp;
+            }
+            cmp = compareString(BossRuneItem.getSuffixModifier(leftStack), BossRuneItem.getSuffixModifier(rightStack));
+            if (cmp != 0) {
+                return ascending ? cmp : -cmp;
+            }
+            return lastCmpRv; // same item
+        }
+        return 0;
+    }
+
+    private static int compareSigils(ItemStack leftStack, ItemStack rightStack, boolean ascending){
+        SigilDefinitionsConfig.SigilDefinition leftSigilData = SigilItem.readSigil(leftStack).orElse(null);
+        SigilDefinitionsConfig.SigilDefinition rightSigilData = SigilItem.readSigil(rightStack).orElse(null);
+        if (leftSigilData != null && rightSigilData != null) {
+            return (ascending ? 1 : -1) * Float.compare(leftSigilData.getDifficulty(), rightSigilData.getDifficulty());
+        }
+        else if (leftSigilData != null) {
+            return ascending ? 1 : -1;
+        }
+        else if (rightSigilData != null) {
+            return ascending ? -1 : 1;
+        }
+        return 0;
+    }
+
+
 
 // ---------------------------------------------------------------------
 // Section: Enum for sorting order
@@ -2287,8 +2338,8 @@ public class SortingHelper
         VAULT_GEAR_SET.add(ModItems.IDOL_MALEVOLENCE.getRegistryName());
 
         VAULT_GEAR_SET.add(ModItems.VOID_STONE.getRegistryName());
-
         VAULT_GEAR_SET.add(ModItems.VAULT_GOD_CHARM.getRegistryName());
+        VAULT_GEAR_SET.add(ModItems.ETCHING.getRegistryName());
 
 
         VAULT_CHARMS.add(ModItems.SMALL_CHARM.getRegistryName());
@@ -2321,5 +2372,6 @@ public class SortingHelper
 
         CUSTOM_SORTING.add(ModItems.DECK_SOCKET.getRegistryName());
         CUSTOM_SORTING.add(ModItems.SIGIL.getRegistryName());
+        CUSTOM_SORTING.add(ModItems.BOSS_RUNE.getRegistryName());
     }
 }
