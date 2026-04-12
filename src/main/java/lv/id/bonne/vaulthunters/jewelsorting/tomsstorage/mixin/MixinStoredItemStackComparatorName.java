@@ -42,20 +42,6 @@ public class MixinStoredItemStackComparatorName
         ItemStack leftStack = left.getStack();
         ItemStack rightStack = right.getStack();
 
-        // Get item registry names.
-
-        int registryOrder = SortingHelper.compareRegistryNames(
-            leftStack.getItem().getRegistryName(),
-            rightStack.getItem().getRegistryName(),
-            !this.reversed);
-
-        if (registryOrder != 0 || !SortingHelper.isSortable(leftStack.getItem().getRegistryName()))
-        {
-            // If registry order is not 0, then return it.
-            cir.setReturnValue(registryOrder);
-            return;
-        }
-
         Integer cmpRv = SortingHelper.compareItems(
             leftStack,
             rightStack,

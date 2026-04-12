@@ -16,7 +16,6 @@ import java.util.Map;
 public class MixinInventoryHelper {
 
     // used for backpack tooltips
-    // same as MixinInventorySorter but just the `if (original == InventorySorter.BY_COUNT)` branch
     @ModifyArg(method = "getCompactedStacksSortedByCount", at = @At(value = "INVOKE", target = "Ljava/util/List;sort(Ljava/util/Comparator;)V"))
     private static Comparator<Map.Entry<ItemStackKey, Integer>> compareJewels(Comparator<Map.Entry<ItemStackKey, Integer>> original) {
             return original.thenComparing((first, second) ->
@@ -24,16 +23,6 @@ public class MixinInventoryHelper {
                 final ItemStack leftStack = first.getKey().getStack();
                 final ItemStack rightStack = second.getKey().getStack();
 
-                int registryOrder = SortingHelper.compareRegistryNames(
-                    leftStack.getItem().getRegistryName(),
-                    rightStack.getItem().getRegistryName(),
-                    true);
-
-                if (registryOrder != 0 ||
-                    !SortingHelper.isSortable(leftStack.getItem().getRegistryName())) {
-                    // Use default string comparing
-                    return registryOrder;
-                }
                 Integer cmpRv = SortingHelper.compareItems(
                     leftStack,
                     rightStack,

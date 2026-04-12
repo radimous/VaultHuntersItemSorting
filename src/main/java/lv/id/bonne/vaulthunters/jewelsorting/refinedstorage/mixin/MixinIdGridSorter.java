@@ -51,19 +51,7 @@ public class MixinIdGridSorter
         if (left.getIngredient() instanceof ItemStack leftStack &&
             right.getIngredient() instanceof ItemStack rightStack)
         {
-            int registryOrder = SortingHelper.compareRegistryNames(
-                leftStack.getItem().getRegistryName(),
-                rightStack.getItem().getRegistryName(),
-                sortingDirection == SortingDirection.ASCENDING);
-
-            if (registryOrder != 0 || !SortingHelper.isSortable(leftStack.getItem().getRegistryName()))
-            {
-                // If registry order is not 0 or item is not sortable, then return it.
-                cir.setReturnValue(registryOrder);
-                return;
-            }
-
-            Integer cmpRv = SortingHelper.compareItems(
+         Integer cmpRv = SortingHelper.compareItems(
                 leftStack,
                 rightStack,
                 left.getName(),

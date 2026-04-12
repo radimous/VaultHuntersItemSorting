@@ -58,18 +58,7 @@ public class MixinQuantityGridSorter
 
         if (left.getIngredient() instanceof ItemStack leftStack &&
             right.getIngredient() instanceof ItemStack rightStack) {
-            // Get item registry names.
 
-            int registryOrder = SortingHelper.compareRegistryNames(
-                leftStack.getItem().getRegistryName(),
-                rightStack.getItem().getRegistryName(),
-                sortingDirection == SortingDirection.ASCENDING);
-
-            if (registryOrder != 0 || !SortingHelper.isSortable(leftStack.getItem().getRegistryName())) {
-                // If registry order is not 0, then return it.
-                cir.setReturnValue(registryOrder);
-                return;
-            }
             Integer cmpRv = SortingHelper.compareItems(
                 leftStack,
                 rightStack,

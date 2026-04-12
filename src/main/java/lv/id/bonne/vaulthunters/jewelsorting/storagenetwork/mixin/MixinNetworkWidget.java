@@ -48,22 +48,12 @@ public class MixinNetworkWidget
                 return 0;
             }
 
-            int registryOrder = SortingHelper.compareRegistryNames(
-                leftStack.getItem().getRegistryName(),
-                rightStack.getItem().getRegistryName(),
-                this.gui.getDownwards()); // TODO: use this for ascending?
 
             Configuration.SortBy sortBy = switch (this.gui.getSort()) {
                 case NAME -> Configuration.SortBy.NAME;
                 case AMOUNT -> Configuration.SortBy.AMOUNT;
                 case MOD -> Configuration.SortBy.MOD;
             };
-
-            if (registryOrder != 0 || !SortingHelper.isSortable(leftStack.getItem().getRegistryName()))
-            {
-                // Use default string comparing
-                return registryOrder;
-            }
 
             Integer cmpRv = SortingHelper.compareItems(
                 leftStack,

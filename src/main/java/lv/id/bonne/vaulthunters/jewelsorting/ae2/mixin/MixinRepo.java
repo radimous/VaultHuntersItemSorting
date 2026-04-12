@@ -72,7 +72,6 @@ public abstract class MixinRepo
                     rightWhat.getModId());
             }
 
-            final ResourceLocation leftId = leftWhat.getId();
 
             final Item leftItem = leftWhat.getItem();
             final Item rightItem = rightWhat.getItem();
@@ -80,16 +79,6 @@ public abstract class MixinRepo
             final CompoundTag leftTag = leftWhat.getTag();
             final CompoundTag rightTag = rightWhat.getTag();
 
-            int registryOrder = SortingHelper.compareRegistryNames(
-                leftId,
-                rightWhat.getId(),
-                ascending);
-
-            if (registryOrder != 0 || !SortingHelper.isSortable(leftId) || leftTag == null || rightTag == null)
-            {
-                // Use default string comparing
-                return registryOrder;
-            }
 
             ItemStack leftStack = new ItemStack(leftItem);
             leftStack.setTag(leftTag);
