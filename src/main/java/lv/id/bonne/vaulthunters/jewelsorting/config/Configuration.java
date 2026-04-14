@@ -34,14 +34,14 @@ public class Configuration
 
         this.jewelSortingByName = builder.
             comment("The order of Jewels if they are sorted by the name.").
-            comment("Supported Values: NAME, ATTRIBUTE, ATTRIBUTE_VALUE, SIZE, LEVEL, ATTRIBUTE_WEIGHT, CUTS").
+            comment("Supported Values: NAME, ATTRIBUTE, ATTRIBUTE_VALUE, SIZE, LEVEL, ATTRIBUTE_WEIGHT, AFFIX_CATEGORY").
             defineList("jewel_sorting_by_name",
                 Arrays.asList(SortingHelper.JewelOptions.NAME.name(),
                     SortingHelper.JewelOptions.ATTRIBUTE.name(),
                     SortingHelper.JewelOptions.ATTRIBUTE_VALUE.name(),
                     SortingHelper.JewelOptions.SIZE.name(),
-                    SortingHelper.JewelOptions.LEVEL.name(),
-                    SortingHelper.JewelOptions.CUTS.name()),
+                    SortingHelper.JewelOptions.AFFIX_CATEGORY.name(),
+                    SortingHelper.JewelOptions.LEVEL.name()),
                 entry -> entry instanceof String value &&
                     Enums.getIfPresent(SortingHelper.JewelOptions.class, value.toUpperCase()).isPresent());
 
@@ -68,19 +68,20 @@ public class Configuration
 
         this.gearSortingByName = builder.
             comment("The order of Gear if they are sorted by the name.").
-            comment("Supported Values: NAME, STATE, RARITY, LEVEL, MODEL").
+            comment("Supported Values: NAME, STATE, RARITY, LEVEL, AFFIX_CATEGORY, MODEL").
             defineList("gear_sorting_by_name",
                 Arrays.asList(SortingHelper.GearOptions.NAME.name(),
                     SortingHelper.GearOptions.STATE.name(),
                     SortingHelper.GearOptions.RARITY.name(),
                     SortingHelper.GearOptions.LEVEL.name(),
+                    SortingHelper.GearOptions.AFFIX_CATEGORY.name(),
                     SortingHelper.GearOptions.MODEL.name()),
                 entry -> entry instanceof String value &&
                     Enums.getIfPresent(SortingHelper.GearOptions.class, value.toUpperCase()).isPresent());
 
         this.gearSortingByAmount = builder.
             comment("The order of Gear if they are sorted by the amount/size.").
-            comment("Supported Values: NAME, STATE, RARITY, LEVEL, MODEL").
+            comment("Supported Values: NAME, STATE, RARITY, LEVEL, AFFIX_CATEGORY, MODEL").
             defineList("gear_sorting_by_amount",
                 Collections.emptyList(),
                 entry -> entry instanceof String value &&
@@ -88,7 +89,7 @@ public class Configuration
 
         this.gearSortingByMod = builder.
             comment("The order of Gear if they are sorted by the mod.").
-            comment("Supported Values: NAME, STATE, RARITY, LEVEL, MODEL").
+            comment("Supported Values: NAME, STATE, RARITY, LEVEL, AFFIX_CATEGORY, MODEL").
             defineList("gear_sorting_by_mod",
                 Collections.emptyList(),
                 entry -> entry instanceof String value &&

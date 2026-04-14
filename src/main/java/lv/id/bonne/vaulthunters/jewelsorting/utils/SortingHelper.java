@@ -98,38 +98,11 @@ public class SortingHelper
 
         if (leftStack.getItem() == ModItems.JEWEL)
         {
-            GearDataCache leftData = GearDataCache.of(leftStack);
-            GearDataCache rightData = GearDataCache.of(rightStack);
-
-            // Update item cache if vault versions mismatch.
-            if (((IExtraGearDataCache) leftData).isInvalidCache())
-            {
-                GearDataCache.removeCache(leftStack);
-                GearDataCache.createCache(leftStack);
-                leftData = GearDataCache.of(leftStack);
-            }
-
-            // Update item cache if vault versions mismatch.
-            if (((IExtraGearDataCache) rightData).isInvalidCache())
-            {
-                GearDataCache.removeCache(rightStack);
-                GearDataCache.createCache(rightStack);
-                rightData = GearDataCache.of(rightStack);
-            }
-            if (((IExtraGearDataCache) rightData).isInvalidCache() || ((IExtraGearDataCache) leftData).isInvalidCache()) {
-                // If cache is still invalid, then fallback to slower VaultGearData comparison.
-                return SortingHelper.compareJewels(leftName,
-                    VaultGearData.read(leftStack),
-                    rightName,
-                    VaultGearData.read(rightStack),
-                    sortBy,
-                    ascending);
-            }
-
-            return SortingHelper.compareJewels(leftName,
-                leftData,
+            return compareJewels(
+                leftName,
+                leftStack,
                 rightName,
-                rightData,
+                rightStack,
                 sortBy,
                 ascending);
         }
@@ -141,9 +114,9 @@ public class SortingHelper
         else if (SortingHelper.VAULT_GEAR_SET.contains(leftStack.getItem().getRegistryName()))
         {
             return SortingHelper.compareVaultGear(leftName,
-                VaultGearData.read(leftStack),
+                leftStack,
                 rightName,
-                VaultGearData.read(rightStack),
+                rightStack,
                 sortBy,
                 ascending);
         }
@@ -306,60 +279,194 @@ public class SortingHelper
             SortingHelper.compareString(rightName, leftName);
     }
 
+    private static int compareJewels(
+        String leftName,
+        ItemStack leftStack,
+        String rightName,
+        ItemStack rightStack,
+        Configuration.SortBy sortBy,
+        boolean ascending)
+    {
+        GearDataCache leftData = GearDataCache.of(leftStack);
+        GearDataCache rightData = GearDataCache.of(rightStack);
+
+        // Update item cache if vault versions mismatch.
+        if (((IExtraGearDataCache) leftData).isInvalidCache())
+        {
+            GearDataCache.removeCache(leftStack);
+            CacheHelper.initCache(leftStack); // single VGD::Read
+            leftData = GearDataCache.of(leftStack);
+        }
+
+        // Update item cache if vault versions mismatch.
+        if (((IExtraGearDataCache) rightData).isInvalidCache())
+        {
+            GearDataCache.removeCache(rightStack);
+            CacheHelper.initCache(rightStack); // single VGD::Read
+            rightData = GearDataCache.of(rightStack);
+        }
+        if (((IExtraGearDataCache) rightData).isInvalidCache() || ((IExtraGearDataCache) leftData).isInvalidCache()) {
+            // If cache is still invalid, then fallback to slower VaultGearData comparison.
+            return SortingHelper.compareJewelsVGD(leftName,
+                leftStack,
+                rightName,
+                rightStack,
+                sortBy,
+                ascending);
+        }
+
+        return SortingHelper.compareJewelsGDC(leftName,
+            leftData,
+            rightName,
+            rightData,
+            sortBy,
+            ascending);
+    }
+
+
+
+    private static List<VaultGearModifier<?>> getAffixes(VaultGearData data)
+    {
+        List<VaultGearModifier<?>> affixes = new ArrayList<>();
+        affixes.addAll(data.getModifiers(VaultGearModifier.AffixType.PREFIX));
+        affixes.addAll(data.getModifiers(VaultGearModifier.AffixType.SUFFIX));
+        return affixes;
+    }
+
 
     /**
      * This method compares two given jewels by their sorting order.
      *
      * @param leftName the left name
-     * @param leftData the left data
+     * @param leftStack the left VaultGearItem
      * @param rightName the right name
-     * @param rightData the right data
+     * @param rightStack the right VaultGearItem
      * @param sortBy the sorting order
      * @param ascending the ascending
      * @return the comparison of two given jewels.
      */
-    private static int compareJewels(
+    private static int compareJewelsVGD(
         String leftName,
-        VaultGearData leftData,
+        ItemStack leftStack,
         String rightName,
-        VaultGearData rightData,
+        ItemStack rightStack,
         Configuration.SortBy sortBy,
         boolean ascending)
     {
 
+        // lazy
+        VaultGearData leftData = null;
+        VaultGearData rightData = null;
+
         List<JewelOptions> sortingOrder = VaultJewelSorting.CONFIGURATION.getJewelSortingOptions(sortBy);
 
-        // Get all affixes for left item.
-        List<VaultGearModifier<?>> leftAffixes = new ArrayList<>();
-        leftAffixes.addAll(leftData.getModifiers(VaultGearModifier.AffixType.PREFIX));
-        leftAffixes.addAll(leftData.getModifiers(VaultGearModifier.AffixType.SUFFIX));
-
-        // Get all affixes for right item.
-        List<VaultGearModifier<?>> rightAffixes = new ArrayList<>();
-        rightAffixes.addAll(rightData.getModifiers(VaultGearModifier.AffixType.PREFIX));
-        rightAffixes.addAll(rightData.getModifiers(VaultGearModifier.AffixType.SUFFIX));
 
         int returnValue = 0;
 
-        // Get compared affix.
-        VaultGearAttribute<?> leftAttribute = leftAffixes.size() == 1 ? leftAffixes.get(0).getAttribute() : null;
-        VaultGearAttribute<?> rightAttribute = rightAffixes.size() == 1 ? rightAffixes.get(0).getAttribute() : null;
+        // lazy
+        List<VaultGearModifier<?>> leftAffixes = null;
+        List<VaultGearModifier<?>> rightAffixes = null;
 
-        for (int i = 0, sortingOrderSize = sortingOrder.size(); returnValue == 0 && i < sortingOrderSize; i++)
+        int i = 0;
+        for (int sortingOrderSize = sortingOrder.size(); returnValue == 0 && i < sortingOrderSize; i++)
         {
             JewelOptions sortOptions = sortingOrder.get(i);
 
             returnValue = switch (sortOptions) {
                 case NAME -> SortingHelper.compareString(leftName, rightName);
-                case ATTRIBUTE -> SortingHelper.compareAttribute(leftAttribute, rightAttribute);
-                case ATTRIBUTE_VALUE -> SortingHelper.compareAttributeValue(leftData, leftAttribute, rightData, rightAttribute);
-                case SIZE -> SortingHelper.compareSizeAttribute(leftData, rightData);
-                case ATTRIBUTE_WEIGHT -> SortingHelper.compareAttributeValueWeight(leftData, leftAttribute, rightData, rightAttribute);
-                case LEVEL -> SortingHelper.compareLevel(leftData, rightData);
-                case CUTS -> 0;
+                case ATTRIBUTE -> {
+                    if (leftData == null) leftData = VaultGearData.read(leftStack);
+                    if (rightData == null) rightData = VaultGearData.read(rightStack);
+
+                    if (leftAffixes == null) leftAffixes = getAffixes(leftData);
+                    if (rightAffixes == null) rightAffixes = getAffixes(rightData);
+
+                    VaultGearAttribute<?> leftAttribute = leftAffixes.size() == 1 ? leftAffixes.get(0).getAttribute() : null;
+                    VaultGearAttribute<?> rightAttribute = rightAffixes.size() == 1 ? rightAffixes.get(0).getAttribute() : null;
+
+                    yield SortingHelper.compareAttribute(leftAttribute, rightAttribute);
+                }
+                case ATTRIBUTE_VALUE -> {
+                    if (leftData == null) leftData = VaultGearData.read(leftStack);
+                    if (rightData == null) rightData = VaultGearData.read(rightStack);
+
+                    if (leftAffixes == null) leftAffixes = getAffixes(leftData);
+                    if (rightAffixes == null) rightAffixes = getAffixes(rightData);
+
+                    VaultGearAttribute<?> leftAttribute = leftAffixes.size() == 1 ? leftAffixes.get(0).getAttribute() : null;
+                    VaultGearAttribute<?> rightAttribute = rightAffixes.size() == 1 ? rightAffixes.get(0).getAttribute() : null;
+
+                    yield SortingHelper.compareAttributeValue(leftData, leftAttribute, rightData, rightAttribute);
+                }
+                case SIZE -> {
+                    if (leftData == null) leftData = VaultGearData.read(leftStack);
+                    if (rightData == null) rightData = VaultGearData.read(rightStack);
+                    yield SortingHelper.compareSizeAttribute(leftData, rightData);
+                }
+                case ATTRIBUTE_WEIGHT -> {
+
+                    if (leftData == null) leftData = VaultGearData.read(leftStack);
+                    if (rightData == null) rightData = VaultGearData.read(rightStack);
+
+                    if (leftAffixes == null) leftAffixes = getAffixes(leftData);
+                    if (rightAffixes == null) rightAffixes = getAffixes(rightData);
+
+                    VaultGearAttribute<?> leftAttribute = leftAffixes.size() == 1 ? leftAffixes.get(0).getAttribute() : null;
+                    VaultGearAttribute<?> rightAttribute = rightAffixes.size() == 1 ? rightAffixes.get(0).getAttribute() : null;
+
+                    if (leftData == null) leftData = VaultGearData.read(leftStack);
+                    if (rightData == null) rightData = VaultGearData.read(rightStack);
+                    yield SortingHelper.compareAttributeValueWeight(leftData, leftAttribute, rightData, rightAttribute);
+                }
+                case LEVEL -> {
+                    if (leftData == null) leftData = VaultGearData.read(leftStack);
+                    if (rightData == null) rightData = VaultGearData.read(rightStack);
+                    yield SortingHelper.compareLevel(leftData, rightData);
+                }
+                case AFFIX_CATEGORY -> {
+                    if (leftData == null) leftData = VaultGearData.read(leftStack);
+                    if (rightData == null) rightData = VaultGearData.read(rightStack);
+
+                    if (leftAffixes == null) leftAffixes = getAffixes(leftData);
+                    if (rightAffixes == null) rightAffixes = getAffixes(rightData);
+
+                    int cmp = 0;
+                    for (VaultGearModifier.AffixCategory category : VaultGearModifier.AffixCategory.values()) {
+                        if (category.getOverlayIcon() == null) {
+                            continue;
+                        }
+                        boolean leftHasCategory = false;
+                        for (VaultGearModifier<?> modifier : leftAffixes) {
+                            if (modifier.hasCategory(category)) {
+                                leftHasCategory = true;
+                                break;
+                            }
+                        }
+                        boolean rightHasCategory = false;
+                        for (VaultGearModifier<?> modifier : rightAffixes) {
+                            if (modifier.hasCategory(category)) {
+                                rightHasCategory = true;
+                                break;
+                            }
+                        }
+                        if (leftHasCategory || rightHasCategory) {
+                            cmp = Boolean.compare(leftHasCategory, rightHasCategory);
+                            if (cmp != 0) {
+                                break;
+                            }
+                        }
+
+                    }
+                    yield cmp;
+                }
             };
         }
 
+        if (returnValue != 0 && i > 3) {
+            System.out.println(i);
+        }
+
+//        VaultJewelSorting.LOGGER.info("JEWEL SORTED, VGD: " + (leftData == null ? "null" : "VGD") + " | " + (rightData == null ? "null" : "VGD") + " | " + ( i - 1  < sortingOrder.size() ? sortingOrder.get(i-1).name() : i-1) + " | " + returnValue);
         return ascending ? returnValue : -returnValue;
     }
 
@@ -375,7 +482,7 @@ public class SortingHelper
      * @param ascending the ascending
      * @return the comparison of two given jewels.
      */
-    private static int compareJewels(
+    private static int compareJewelsGDC(
         String leftName,
         GearDataCache leftData,
         String rightName,
@@ -405,7 +512,20 @@ public class SortingHelper
                 case ATTRIBUTE_WEIGHT -> SortingHelper.compareAttributeValueWeight(leftExtraCache, rightExtraCache);
                 case LEVEL -> SortingHelper.compareIntegerValue(leftExtraCache.getExtraGearLevel(),
                     rightExtraCache.getExtraGearLevel());
-                case CUTS -> 0;
+                case AFFIX_CATEGORY -> {
+                    for (VaultGearModifier.AffixCategory category : VaultGearModifier.AffixCategory.values()) {
+                        if (category.getOverlayIcon() == null) {
+                            continue;
+                        }
+                        boolean leftHasCategory = leftData.hasModifierOfCategory(category);
+                        boolean rightHasCategory = rightData.hasModifierOfCategory(category);
+                        int cmp = Boolean.compare(leftHasCategory, rightHasCategory);
+                        if (cmp != 0) {
+                            yield cmp;
+                        }
+                    }
+                    yield 0;
+                }
             };
         }
 
@@ -417,20 +537,23 @@ public class SortingHelper
      * This method compares two given vault gear by their sorting order.
      *
      * @param leftName the left name
-     * @param leftData the left data
+     * @param leftStack the left VaultGearItem
      * @param rightName the right name
-     * @param rightData the right data
+     * @param rightStack the right VaultGearItem
      * @param sortBy the sorting order
      * @param ascending the ascending
      * @return the comparison of two given vault gear items.
      */
     private static int compareVaultGear(String leftName,
-        VaultGearData leftData,
+        ItemStack leftStack,
         String rightName,
-        VaultGearData rightData,
+        ItemStack rightStack,
         Configuration.SortBy sortBy,
         boolean ascending)
     {
+
+        VaultGearData leftData = null;
+        VaultGearData rightData = null;
 
         List<GearOptions> sortingOrder = VaultJewelSorting.CONFIGURATION.getGearSortingOptions(sortBy);
         // Start comparing with the current vault gear state.
@@ -442,10 +565,59 @@ public class SortingHelper
 
             returnValue = switch (sortOptions) {
                 case NAME -> SortingHelper.compareString(leftName, rightName);
-                case STATE -> SortingHelper.compareState(leftData, rightData);
-                case RARITY -> SortingHelper.compareRarity(leftData, rightData);
-                case LEVEL -> SortingHelper.compareLevel(leftData, rightData);
-                case MODEL -> SortingHelper.compareModel(leftData, rightData);
+                case STATE -> {
+                    if (leftData == null) leftData = VaultGearData.read(leftStack);
+                    if (rightData == null) rightData = VaultGearData.read(rightStack);
+                    yield SortingHelper.compareState(leftData, rightData);
+                }
+                case RARITY -> {
+                    if (leftData == null) leftData = VaultGearData.read(leftStack);
+                    if (rightData == null) rightData = VaultGearData.read(rightStack);
+                    yield SortingHelper.compareRarity(leftData, rightData);
+                }
+                case LEVEL -> {
+                    if (leftData == null) leftData = VaultGearData.read(leftStack);
+                    if (rightData == null) rightData = VaultGearData.read(rightStack);
+                    yield SortingHelper.compareLevel(leftData, rightData);
+                }
+                case MODEL -> {
+                    if (leftData == null) leftData = VaultGearData.read(leftStack);
+                    if (rightData == null) rightData = VaultGearData.read(rightStack);
+                    yield SortingHelper.compareModel(leftData, rightData);
+                }
+                case AFFIX_CATEGORY -> {
+                    if (leftData == null) leftData = VaultGearData.read(leftStack);
+                    if (rightData == null) rightData = VaultGearData.read(rightStack);
+
+                    var leftAffixes = getAffixes(leftData);
+                    var rightAffixes = getAffixes(rightData);
+
+                    int cmp = 0;
+                    for (VaultGearModifier.AffixCategory category : VaultGearModifier.AffixCategory.values()) {
+                        if (category.getOverlayIcon() == null) {
+                            continue;
+                        }
+                        boolean leftHasCategory = false;
+                        for (VaultGearModifier<?> modifier : leftAffixes) {
+                            if (modifier.hasCategory(category)) {
+                                leftHasCategory = true;
+                                break;
+                            }
+                        }
+                        boolean rightHasCategory = false;
+                        for (VaultGearModifier<?> modifier : rightAffixes) {
+                            if (modifier.hasCategory(category)) {
+                                rightHasCategory = true;
+                                break;
+                            }
+                        }
+                        cmp = Boolean.compare(leftHasCategory, rightHasCategory);
+                        if (cmp != 0) {
+                            break;
+                        }
+                    }
+                    yield cmp;
+                }
             };
         }
 
@@ -2058,7 +2230,7 @@ public class SortingHelper
         /**
          * Number of free cuts applied to gear
          */
-        CUTS
+        AFFIX_CATEGORY
     }
 
 
@@ -2086,7 +2258,8 @@ public class SortingHelper
         /**
          * The model fo the gear.
          */
-        MODEL
+        MODEL,
+        AFFIX_CATEGORY,
     }
 
 
@@ -2359,6 +2532,7 @@ public class SortingHelper
         VAULT_GEAR_SET.add(ModItems.VOID_STONE.getRegistryName());
         VAULT_GEAR_SET.add(ModItems.VAULT_GOD_CHARM.getRegistryName());
         VAULT_GEAR_SET.add(ModItems.ETCHING.getRegistryName());
+        VAULT_GEAR_SET.add(ModItems.VAULT_NECKLACE.getRegistryName());
 
 
         VAULT_CHARMS.add(ModItems.SMALL_CHARM.getRegistryName());

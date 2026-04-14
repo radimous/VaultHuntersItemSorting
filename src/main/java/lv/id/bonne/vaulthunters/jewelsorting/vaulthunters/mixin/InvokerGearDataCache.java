@@ -57,4 +57,7 @@ public interface InvokerGearDataCache
      */
     @Invoker(value = "cacheTag", remap = false)
     CompoundTag callCacheTag();
+
+    @Invoker(value = "queryEnumCache", remap = false)
+    <T extends Enum<T>> T callQueryEnumCache(String key, Class<T> enumClass, Function<ItemStack, Integer> cacheInit);
 }

@@ -7,6 +7,7 @@
 package lv.id.bonne.vaulthunters.jewelsorting.vaulthunters.mixin;
 
 
+import lv.id.bonne.vaulthunters.jewelsorting.utils.CacheHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -54,98 +55,11 @@ public class MixinGearDataCache implements IExtraGearDataCache
     {
         if (stack.getItem() instanceof JewelItem)
         {
-            MixinGearDataCache.populateJewelCache(cache, stack);
+            var gearData = VaultGearData.read(stack);
+            CacheHelper.populateJewelCache(cache, gearData);
         }
     }
 
-
-    /**
-     * This method populates jewel cache.
-     * @param cache The cache to populate.
-     * @param itemStack The item stack to populate cache from.
-     */
-    private static void populateJewelCache(GearDataCache cache, ItemStack itemStack)
-    {
-        VaultGearData data = VaultGearData.read(itemStack);
-
-        List<VaultGearModifier<?>> affixes = new ArrayList<>();
-        affixes.addAll(data.getModifiers(VaultGearModifier.AffixType.PREFIX));
-        affixes.addAll(data.getModifiers(VaultGearModifier.AffixType.SUFFIX));
-
-        ((InvokerGearDataCache) cache).callQueryIntCache(SortingHelper.EXTRA_ATTRIBUTE_INDEX,
-            -1,
-            (stack) ->
-            {
-                if (affixes.size() == 1)
-                {
-                    return AttributeHelper.getAttributeIndex(affixes.get(0).getAttribute());
-                }
-                else
-                {
-                    return -1;
-                }
-            });
-
-        ((InvokerGearDataCache) cache).callQueryCache(SortingHelper.EXTRA_ATTRIBUTE_VALUE,
-            tag -> ((DoubleTag) tag).getAsDouble(),
-            DoubleTag::valueOf,
-            null,
-            Function.identity(),
-            (stack) ->
-            {
-                if (affixes.size() == 1)
-                {
-                    VaultGearAttribute<?> attribute = affixes.get(0).getAttribute();
-
-                    if (AttributeHelper.isDoubleAttribute(attribute))
-                    {
-                        Optional<Double> value = (Optional<Double>) data.getFirstValue(attribute);
-                        return value.orElse(null);
-                    }
-                    else if (AttributeHelper.isFloatAttribute(attribute))
-                    {
-                        Optional<Float> value = (Optional<Float>) data.getFirstValue(attribute);
-                        return value.map(Double::valueOf).orElse(null);
-                    }
-                    else if (AttributeHelper.isIntegerAttribute(attribute))
-                    {
-                        Optional<Integer> value = (Optional<Integer>) data.getFirstValue(attribute);
-                        return value.map(Double::valueOf).orElse(null);
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }
-                else
-                {
-                    return null;
-                }
-            });
-
-
-        ((InvokerGearDataCache) cache).callQueryIntCache(SortingHelper.EXTRA_JEWEL_SIZE, 0, (stack) ->
-        {
-            if (stack.getItem() instanceof JewelItem)
-            {
-                return data.getFirstValue(ModGearAttributes.JEWEL_SIZE).orElse(null);
-            }
-            else
-            {
-                return null;
-            }
-        });
-
-        ((InvokerGearDataCache) cache).callQueryIntCache(SortingHelper.EXTRA_GEAR_LEVEL, 0, (stack) ->
-            data.getItemLevel());
-
-        ((InvokerGearDataCache) cache).callQueryCache(SortingHelper.EXTRA_CACHE_VERSION,
-            Tag::getAsString,
-            StringTag::valueOf,
-            null,
-            Function.identity(),
-            stack -> VaultJewelSorting.VAULT_MOD_VERSION);
-    }
 
 
     /**
