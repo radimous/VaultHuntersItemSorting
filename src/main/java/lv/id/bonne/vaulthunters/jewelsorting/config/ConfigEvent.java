@@ -8,14 +8,7 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
 @Mod.EventBusSubscriber(modid = "vault_hunters_jewel_sorting", bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ConfigEvent {
     @SubscribeEvent
-    public static void onConfigLoad(ModConfigEvent.Loading event) {
-        if (event.getConfig().getModId().equals("vault_hunters_jewel_sorting")) {
-            VaultJewelSorting.CONFIGURATION.refreshCache();
-        }
-    }
-
-    @SubscribeEvent
-    public static void onConfigReload(ModConfigEvent.Reloading event) {
+    public static void onConfigLoad(ModConfigEvent event) {
         if (event.getConfig().getModId().equals("vault_hunters_jewel_sorting")) {
             VaultJewelSorting.CONFIGURATION.refreshCache();
         }
