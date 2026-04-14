@@ -39,7 +39,7 @@ public class MixinSortingHandler {
             rightStack,
             Configuration.SortBy.NAME,
             true);
-        if (cmpRv != 0) {
+        if (cmpRv != null && cmpRv != 0) {
             cir.setReturnValue(cmpRv);
         }
     }
