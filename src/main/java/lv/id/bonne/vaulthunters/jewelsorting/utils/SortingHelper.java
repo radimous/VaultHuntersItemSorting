@@ -15,6 +15,7 @@ import iskallia.vault.gear.VaultGearState;
 import iskallia.vault.gear.attribute.VaultGearAttribute;
 import iskallia.vault.gear.attribute.VaultGearAttributeInstance;
 import iskallia.vault.gear.attribute.VaultGearModifier;
+import iskallia.vault.gear.attribute.ability.AbilityLevelAttribute;
 import iskallia.vault.gear.data.AttributeGearData;
 import iskallia.vault.gear.data.GearDataCache;
 import iskallia.vault.gear.data.VaultGearData;
@@ -52,8 +53,7 @@ public class SortingHelper
      */
     public static boolean isSortable(ResourceLocation id)
     {
-        return SortingHelper.VAULT_CHARMS.contains(id) ||
-            SortingHelper.VAULT_GEAR_SET.contains(id) ||
+        return SortingHelper.VAULT_GEAR_SET.contains(id) ||
             SortingHelper.CUSTOM_SORTING.contains(id);
     }
 
@@ -78,6 +78,11 @@ public class SortingHelper
                                                  boolean ascending)
     {
 
+        int isGearCmp = compareIsGear(leftStack.getItem().getRegistryName(), rightStack.getItem().getRegistryName(), ascending);
+        if (isGearCmp != 0) {
+            return isGearCmp;
+        }
+
         int registryOrder = SortingHelper.compareRegistryNames(
             leftStack.getItem().getRegistryName(),
             rightStack.getItem().getRegistryName(),
@@ -88,15 +93,13 @@ public class SortingHelper
             return registryOrder;
         }
 
-        if (leftStack == rightStack ||
-            !leftStack.getItem().equals(rightStack.getItem()) ||
-            !SortingHelper.isSortable(leftStack.getItem().getRegistryName())) {
+        if (leftStack == rightStack || !SortingHelper.isSortable(leftStack.getItem().getRegistryName())) {
             // Leave to original code.
             return null;
         }
 
 
-        if (leftStack.getItem() == ModItems.JEWEL)
+        if (leftStack.getItem() == ModItems.JEWEL && rightStack.getItem() == ModItems.JEWEL)
         {
             return compareJewels(
                 leftName,
@@ -106,7 +109,7 @@ public class SortingHelper
                 sortBy,
                 ascending);
         }
-        else if (leftStack.getItem() == ModItems.TOOL)
+        else if (leftStack.getItem() == ModItems.TOOL && rightStack.getItem() == ModItems.TOOL)
         {
             // TODO: compare tools. Currently no.
             return null;
@@ -119,8 +122,9 @@ public class SortingHelper
                 rightStack,
                 sortBy,
                 ascending);
-        }
-        else if (leftStack.getItem() == ModItems.INSCRIPTION)
+        } else if (leftStack.getItem() != rightStack.getItem()) {
+            return null; // sanity check
+        } else if (leftStack.getItem() == ModItems.INSCRIPTION)
         {
             return SortingHelper.compareInscriptions(leftName,
                 InscriptionData.from(leftStack),
@@ -141,17 +145,6 @@ public class SortingHelper
         else if (leftStack.getItem() == ModItems.TRINKET)
         {
             return SortingHelper.compareTrinkets(leftName,
-                AttributeGearData.read(leftStack),
-                leftStack.getTag(),
-                rightName,
-                AttributeGearData.read(rightStack),
-                rightStack.getTag(),
-                sortBy,
-                ascending);
-        }
-        else if (SortingHelper.VAULT_CHARMS.contains(leftStack.getItem().getRegistryName()))
-        {
-            return SortingHelper.compareCharms(leftName,
                 AttributeGearData.read(leftStack),
                 leftStack.getTag(),
                 rightName,
@@ -187,8 +180,27 @@ public class SortingHelper
                 sortBy,
                 ascending);
         }
-        if (leftStack.getItem() == ModItems.BOSS_RUNE) {
+        else if (leftStack.getItem() == ModItems.BOSS_RUNE) {
             return compareBossRunes(leftStack, rightStack, sortBy, ascending);
+        }
+        else if (leftStack.getItem() == ModItems.VAULT_NECKLACE) {
+            var leftData = VaultGearData.read(leftStack);
+            var rightData = VaultGearData.read(rightStack);
+            VaultGearAttributeInstance<AbilityLevelAttribute> leftAttribute = leftData.getModifiers(ModGearAttributes.ABILITY_LEVEL, VaultGearData.Type.SUFFIXES).stream().findFirst().orElse(null);
+            VaultGearAttributeInstance<AbilityLevelAttribute> rightAttribute = rightData.getModifiers(ModGearAttributes.ABILITY_LEVEL, VaultGearData.Type.SUFFIXES).stream().findFirst().orElse(null);
+            if (leftAttribute == null && rightAttribute == null) {
+                return 0;
+            }
+            else if (leftAttribute == null) {
+                return ascending ? 1 : -1;
+            }
+            else if (rightAttribute == null) {
+                return ascending ? -1 : 1;
+            }
+            else {
+                return (ascending ? 1 : -1) * SortingHelper.compareString(leftAttribute.getValue().getAbility(), rightAttribute.getValue().getAbility());
+            }
+
         }
         else
         {
@@ -252,6 +264,30 @@ public class SortingHelper
         return null;
     }
 
+    // gear items will be grouped together
+    private static boolean isVaultGear(ResourceLocation reg) {
+        return VAULT_GEAR_SET.contains(reg)
+            && !ModItems.VAULT_GOD_CHARM.getRegistryName().equals(reg)
+            && !ModItems.VAULT_NECKLACE.getRegistryName().equals(reg)
+            && !ModItems.ETCHING.getRegistryName().equals(reg);
+    }
+
+    private static int compareIsGear(ResourceLocation leftReg,
+                                            ResourceLocation rightReg,
+                                            boolean ascending)
+    {
+        boolean isLeftGear = isVaultGear(leftReg);
+        boolean isRightGear = isVaultGear(rightReg);
+
+        if (isLeftGear && !isRightGear) {
+            return ascending ? -1 : 1;
+        } else if (!isLeftGear && isRightGear) {
+            return ascending ? 1 : -1;
+        }
+        return 0;
+
+    }
+
 
     /**
      * This method compares two given registry names.
@@ -264,19 +300,9 @@ public class SortingHelper
         ResourceLocation rightReg,
         boolean ascending)
     {
-        String leftName = VAULT_GEAR_SET.contains(leftReg) ?
-            VaultMod.sId("gear") :
-            VAULT_CHARMS.contains(leftReg) ?
-                VaultMod.sId("charm"): leftReg.toString();
-
-        String rightName = VAULT_GEAR_SET.contains(rightReg) ?
-            VaultMod.sId("gear") :
-            VAULT_CHARMS.contains(rightReg) ?
-                VaultMod.sId("charm"): rightReg.toString();
-
         return ascending ?
-            SortingHelper.compareString(leftName, rightName) :
-            SortingHelper.compareString(rightName, leftName);
+            SortingHelper.compareString(leftReg.toString(), rightReg.toString()) :
+            SortingHelper.compareString(rightReg.toString(), leftReg.toString());
     }
 
     private static int compareJewels(
@@ -867,51 +893,6 @@ public class SortingHelper
                 case XP -> Double.compare(getDollXP(leftTag), getDollXP(rightTag));
                 case LOOT -> Double.compare(getDollLoot(leftTag), getDollLoot(rightTag));
                 case COMPLETED -> Boolean.compare(getDollCompletion(leftTag), getDollCompletion(rightTag));
-            };
-        }
-
-        return ascending ? returnValue : -returnValue;
-    }
-
-
-    /**
-     * This method compares two given vault charms by their sorting order.
-     * @param leftName the left name
-     * @param leftData the left data
-     * @param leftTag the left tag
-     * @param rightName the right name
-     * @param rightData the right data
-     * @param rightTag the right tag
-     * @param sortBy the sorting order
-     * @param ascending the ascending
-     * @return the comparison of two given vault charms items.
-     */
-    private static int compareCharms(String leftName,
-        AttributeGearData leftData,
-        CompoundTag leftTag,
-        String rightName,
-        AttributeGearData rightData,
-        CompoundTag rightTag,
-        Configuration.SortBy sortBy,
-        boolean ascending)
-    {
-        List<CharmOptions> sortingOrder = VaultJewelSorting.CONFIGURATION.getCharmSortingOptions(sortBy);
-        int returnValue = Boolean.compare(isIdentified(leftData), isIdentified(rightData));
-
-        if (!isIdentified(leftData) && returnValue == 0)
-        {
-            // Exit fast. Unidentified items are not comparable.
-            return 0;
-        }
-
-        for (int i = 0, sortingOrderSize = sortingOrder.size(); returnValue == 0 && i < sortingOrderSize; i++)
-        {
-            CharmOptions sortOptions = sortingOrder.get(i);
-
-            returnValue = switch (sortOptions) {
-                case NAME -> SortingHelper.compareString(leftName, rightName);
-                case USES -> Integer.compare(getRemainingUses(leftTag), getRemainingUses(rightTag));
-                case VALUE -> Float.compare(getCharmValue(leftTag), getCharmValue(rightTag));
             };
         }
 
@@ -1982,18 +1963,6 @@ public class SortingHelper
         return tag != null && tag.contains("vaultUUID");
     }
 
-
-    /**
-     * This method returns name of charm value %.
-     * @param tag The tag of the item.
-     * @return The charm value %.
-     */
-    private static float getCharmValue(CompoundTag tag)
-    {
-        return tag.contains("charmValue") ? tag.getFloat("charmValue") : 0f;
-    }
-
-
     /**
      * This method checks if given gear is identified.
      * @param data The data of the gear.
@@ -2362,27 +2331,6 @@ public class SortingHelper
         LOOT
     }
 
-
-    /**
-     * This enum holds all possible values for vault charm sorting order
-     */
-    public enum CharmOptions
-    {
-        /**
-         * The name of item
-         */
-        NAME,
-        /**
-         * The god affinity value of charm
-         */
-        VALUE,
-        /**
-         * The uses of charm
-         */
-        USES
-    }
-
-
     /**
      * This enum holds all possible values for infused catalyst sorting order
      */
@@ -2498,11 +2446,6 @@ public class SortingHelper
     public static final Set<ResourceLocation> VAULT_GEAR_SET = new HashSet<>();
 
     /**
-     * The set of items that are considered vault charms.
-     */
-    public static final Set<ResourceLocation> VAULT_CHARMS = new HashSet<>();
-
-    /**
      * The set of items that can be sorted by this algorithm.
      */
     public static final Set<ResourceLocation> CUSTOM_SORTING = new HashSet<>();
@@ -2532,13 +2475,6 @@ public class SortingHelper
         VAULT_GEAR_SET.add(ModItems.VOID_STONE.getRegistryName());
         VAULT_GEAR_SET.add(ModItems.VAULT_GOD_CHARM.getRegistryName());
         VAULT_GEAR_SET.add(ModItems.ETCHING.getRegistryName());
-        VAULT_GEAR_SET.add(ModItems.VAULT_NECKLACE.getRegistryName());
-
-
-        VAULT_CHARMS.add(ModItems.SMALL_CHARM.getRegistryName());
-        VAULT_CHARMS.add(ModItems.LARGE_CHARM.getRegistryName());
-        VAULT_CHARMS.add(ModItems.GRAND_CHARM.getRegistryName());
-        VAULT_CHARMS.add(ModItems.MAJESTIC_CHARM.getRegistryName());
 
         CUSTOM_SORTING.add(ModItems.JEWEL.getRegistryName());
         CUSTOM_SORTING.add(ModItems.INSCRIPTION.getRegistryName());
@@ -2566,5 +2502,6 @@ public class SortingHelper
         CUSTOM_SORTING.add(ModItems.DECK_SOCKET.getRegistryName());
         CUSTOM_SORTING.add(ModItems.SIGIL.getRegistryName());
         CUSTOM_SORTING.add(ModItems.BOSS_RUNE.getRegistryName());
+        CUSTOM_SORTING.add(ModItems.VAULT_NECKLACE.getRegistryName());
     }
 }

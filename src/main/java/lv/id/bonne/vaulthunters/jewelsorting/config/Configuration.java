@@ -248,37 +248,6 @@ public class Configuration
 
         builder.pop();
 
-        builder.comment("This category holds options how Vault Charms are sorted");
-        builder.push("Vault Charm Sorting");
-
-        this.charmSortingByName = builder.
-            comment("The order of charms if they are sorted by the name.").
-            comment("Supported Values: NAME, USES, VALUE").
-            defineList("charm_sorting_by_name",
-                Arrays.asList(SortingHelper.CharmOptions.NAME.name(),
-                    SortingHelper.CharmOptions.USES.name(),
-                    SortingHelper.CharmOptions.VALUE.name()),
-                entry -> entry instanceof String value &&
-                    Enums.getIfPresent(SortingHelper.CharmOptions.class, value.toUpperCase()).isPresent());
-
-        this.charmSortingByAmount = builder.
-            comment("The order of charms if they are sorted by the amount/size.").
-            comment("Supported Values: NAME, USES, VALUE").
-            defineList("charm_sorting_by_amount",
-                Collections.emptyList(),
-                entry -> entry instanceof String value &&
-                    Enums.getIfPresent(SortingHelper.CharmOptions.class, value.toUpperCase()).isPresent());
-
-        this.charmSortingByMod = builder.
-            comment("The order of charms if they are sorted by the mod.").
-            comment("Supported Values: NAME, USES, VALUE").
-            defineList("charm_sorting_by_mod",
-                Collections.emptyList(),
-                entry -> entry instanceof String value &&
-                    Enums.getIfPresent(SortingHelper.CharmOptions.class, value.toUpperCase()).isPresent());
-
-        builder.pop();
-
         builder.comment("This category holds options how Infused Catalysts are sorted");
         builder.push("Infused Catalysts Sorting");
 
@@ -444,16 +413,6 @@ public class Configuration
         };
     }
 
-    public List<SortingHelper.CharmOptions> getCharmSortingOptions(SortBy sortBy)
-    {
-        return switch (sortBy)
-        {
-            case NAME -> this.charmSortingByNameCache;
-            case AMOUNT -> this.charmSortingByAmountCache;
-            case MOD -> this.charmSortingByModCache;
-        };
-    }
-
     public List<SortingHelper.CatalystOptions> getCatalystSortingOptions(SortBy sortBy)
     {
         return switch (sortBy)
@@ -570,21 +529,6 @@ public class Configuration
     }
 
 
-    /**
-     * This method converts String list to Enum list.
-     * @param value The string list that need to be converted.
-     * @return Converted Enum list.
-     */
-    private List<SortingHelper.CharmOptions> convertStringToCharmEnum(List<? extends String> value)
-    {
-        return value.stream().
-            map(String::toUpperCase).
-            filter(upperCase -> Enums.getIfPresent(SortingHelper.CharmOptions.class, upperCase).isPresent()).
-            map(SortingHelper.CharmOptions::valueOf).
-            distinct().
-            toList();
-    }
-
 
     /**
      * This method converts String list to Enum list.
@@ -642,10 +586,6 @@ public class Configuration
     private List<SortingHelper.DollOptions> dollSortingByAmountCache;
     private List<SortingHelper.DollOptions> dollSortingByModCache;
 
-    private List<SortingHelper.CharmOptions> charmSortingByNameCache;
-    private List<SortingHelper.CharmOptions> charmSortingByAmountCache;
-    private List<SortingHelper.CharmOptions> charmSortingByModCache;
-
     private List<SortingHelper.CatalystOptions> catalystSortingByNameCache;
     private List<SortingHelper.CatalystOptions> catalystSortingByAmountCache;
     private List<SortingHelper.CatalystOptions> catalystSortingByModCache;
@@ -691,12 +631,6 @@ public class Configuration
         if (dollSortingByAmountCache.isEmpty()) {dollSortingByAmountCache = List.copyOf(dollSortingByNameCache);}
         this.dollSortingByModCache = convertStringToDollEnum(dollSortingByMod.get());
         if (dollSortingByModCache.isEmpty()) {dollSortingByModCache = List.copyOf(dollSortingByNameCache);}
-
-        this.charmSortingByNameCache = convertStringToCharmEnum(charmSortingByName.get());
-        this.charmSortingByAmountCache = convertStringToCharmEnum(charmSortingByAmount.get());
-        if (charmSortingByAmountCache.isEmpty()) {charmSortingByAmountCache = List.copyOf(charmSortingByNameCache);}
-        this.charmSortingByModCache = convertStringToCharmEnum(charmSortingByMod.get());
-        if (charmSortingByModCache.isEmpty()) {charmSortingByModCache = List.copyOf(charmSortingByNameCache);}
 
         this.catalystSortingByNameCache = convertStringToCatalystEnum(catalystSortingByName.get());
         this.catalystSortingByAmountCache = convertStringToCatalystEnum(catalystSortingByAmount.get());
@@ -812,21 +746,6 @@ public class Configuration
      * The config value for vault doll sorting by mod.
      */
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> dollSortingByMod;
-
-    /**
-     * The config value for vault charm sorting by name.
-     */
-    private final ForgeConfigSpec.ConfigValue<List<? extends String>> charmSortingByName;
-
-    /**
-     * The config value for vault charm sorting by amount.
-     */
-    private final ForgeConfigSpec.ConfigValue<List<? extends String>> charmSortingByAmount;
-
-    /**
-     * The config value for vault charm sorting by mod.
-     */
-    private final ForgeConfigSpec.ConfigValue<List<? extends String>> charmSortingByMod;
 
     /**
      * The config value for infused catalyst sorting by name.

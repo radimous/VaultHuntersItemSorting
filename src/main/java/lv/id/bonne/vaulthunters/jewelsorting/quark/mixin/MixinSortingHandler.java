@@ -34,6 +34,12 @@ public class MixinSortingHandler {
         cancellable = true,
         remap = false)
     private static void stackCompare(ItemStack leftStack, ItemStack rightStack, CallbackInfoReturnable<Integer> cir) {
+        if (leftStack == rightStack ||
+            !leftStack.getItem().equals(rightStack.getItem()) ||
+            !SortingHelper.isSortable(leftStack.getItem().getRegistryName()))
+        {
+            return;
+        }
         Integer cmpRv = SortingHelper.compareItems(
             leftStack,
             rightStack,
