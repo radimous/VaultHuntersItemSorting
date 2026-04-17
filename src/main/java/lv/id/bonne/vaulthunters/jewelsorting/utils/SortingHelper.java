@@ -316,35 +316,36 @@ public class SortingHelper
         GearDataCache leftData = GearDataCache.of(leftStack);
         GearDataCache rightData = GearDataCache.of(rightStack);
 
-        // Update item cache if vault versions mismatch.
-        if (((IExtraGearDataCache) leftData).isInvalidCache())
-        {
-            GearDataCache.removeCache(leftStack);
-            CacheHelper.initCache(leftStack); // single VGD::Read
-            leftData = GearDataCache.of(leftStack);
-        }
+        if (leftData instanceof IExtraGearDataCache leftExtraCache && rightData instanceof IExtraGearDataCache rightExtraCache) {
+            // Update item cache if vault versions mismatch.
+            if (leftExtraCache.isInvalidCache())
+            {
+                GearDataCache.removeCache(leftStack);
+                CacheHelper.initCache(leftStack); // single VGD::Read
+                leftExtraCache = GearDataCache.of(leftStack) instanceof IExtraGearDataCache cache ? cache : leftExtraCache;
+            }
 
-        // Update item cache if vault versions mismatch.
-        if (((IExtraGearDataCache) rightData).isInvalidCache())
-        {
-            GearDataCache.removeCache(rightStack);
-            CacheHelper.initCache(rightStack); // single VGD::Read
-            rightData = GearDataCache.of(rightStack);
+            // Update item cache if vault versions mismatch.
+            if (rightExtraCache.isInvalidCache())
+            {
+                GearDataCache.removeCache(rightStack);
+                CacheHelper.initCache(rightStack); // single VGD::Read
+                rightExtraCache = GearDataCache.of(rightStack) instanceof IExtraGearDataCache cache ? cache : rightExtraCache;
+            }
+            if (!leftExtraCache.isInvalidCache() && !rightExtraCache.isInvalidCache()) {
+                return SortingHelper.compareJewelsGDC(leftName,
+                    leftExtraCache,
+                    rightName,
+                    rightExtraCache,
+                    sortBy,
+                    ascending);
+            }
         }
-        if (((IExtraGearDataCache) rightData).isInvalidCache() || ((IExtraGearDataCache) leftData).isInvalidCache()) {
-            // If cache is still invalid, then fallback to slower VaultGearData comparison.
-            return SortingHelper.compareJewelsVGD(leftName,
-                leftStack,
-                rightName,
-                rightStack,
-                sortBy,
-                ascending);
-        }
-
-        return SortingHelper.compareJewelsGDC(leftName,
-            leftData,
+        // If cache is still invalid, then fallback to slower VaultGearData comparison.
+        return SortingHelper.compareJewelsVGD(leftName,
+            leftStack,
             rightName,
-            rightData,
+            rightStack,
             sortBy,
             ascending);
     }
@@ -501,18 +502,18 @@ public class SortingHelper
      * This method compares two given jewels by their sorting order.
      *
      * @param leftName the left name
-     * @param leftData the left data
+     * @param leftExtraCache the left data
      * @param rightName the right name
-     * @param rightData the right data
+     * @param rightExtraCache the right data
      * @param sortBy the sorting order
      * @param ascending the ascending
      * @return the comparison of two given jewels.
      */
     private static int compareJewelsGDC(
         String leftName,
-        GearDataCache leftData,
+        IExtraGearDataCache leftExtraCache,
         String rightName,
-        GearDataCache rightData,
+        IExtraGearDataCache rightExtraCache,
         Configuration.SortBy sortBy,
         boolean ascending)
     {
@@ -520,8 +521,8 @@ public class SortingHelper
         List<JewelOptions> sortingOrder = VaultJewelSorting.CONFIGURATION.getJewelSortingOptions(sortBy);
         int returnValue = 0;
 
-        IExtraGearDataCache leftExtraCache = (IExtraGearDataCache) leftData;
-        IExtraGearDataCache rightExtraCache = (IExtraGearDataCache) rightData;
+        GearDataCache leftData = leftExtraCache instanceof GearDataCache cache ? cache : null;
+        GearDataCache rightData = rightExtraCache instanceof GearDataCache cache ? cache : null;
 
         for (int i = 0, sortingOrderSize = sortingOrder.size(); returnValue == 0 && i < sortingOrderSize; i++)
         {
@@ -541,6 +542,9 @@ public class SortingHelper
                 case AFFIX_CATEGORY -> {
                     for (VaultGearModifier.AffixCategory category : VaultGearModifier.AffixCategory.values()) {
                         if (category.getOverlayIcon() == null) {
+                            continue;
+                        }
+                        if (leftData == null || rightData == null) {
                             continue;
                         }
                         boolean leftHasCategory = leftData.hasModifierOfCategory(category);
