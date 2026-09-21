@@ -238,7 +238,7 @@ public class SortingHelper
 
         if (leftItem == ModItems.RELIC_FRAGMENT) {
             return SortingHelper.compareRelicFragments(leftTag, rightTag, ascending);
-        } else if (leftItem == ModItems.RESPEC_FLASK) {
+        } else if (RESPEC_FLASK.equals(leftItem.getRegistryName())) {
             return SortingHelper.compareRespecFlasks(leftTag, rightTag, ascending);
         } else if (leftItem == ModItems.FACETED_FOCUS) {
             return SortingHelper.compareFacedFocus(leftTag, rightTag, ascending);
@@ -2454,6 +2454,9 @@ public class SortingHelper
      */
     public static final Set<ResourceLocation> CUSTOM_SORTING = new HashSet<>();
 
+    private static final ResourceLocation VOID_STONE = new ResourceLocation("the_vault", "void_stone");
+    private static final ResourceLocation RESPEC_FLASK = new ResourceLocation("the_vault", "respec_flask");
+
     // Put all vault gear items into the set.
     static
     {
@@ -2476,7 +2479,8 @@ public class SortingHelper
         VAULT_GEAR_SET.add(ModItems.IDOL_TIMEKEEPER.getRegistryName());
         VAULT_GEAR_SET.add(ModItems.IDOL_MALEVOLENCE.getRegistryName());
 
-        VAULT_GEAR_SET.add(ModItems.VOID_STONE.getRegistryName());
+        // These items remain registered in Remastered, but are no longer exposed by ModItems.
+        VAULT_GEAR_SET.add(VOID_STONE);
         VAULT_GEAR_SET.add(ModItems.VAULT_GOD_CHARM.getRegistryName());
         VAULT_GEAR_SET.add(ModItems.ETCHING.getRegistryName());
 
@@ -2487,7 +2491,7 @@ public class SortingHelper
         CUSTOM_SORTING.add(ModItems.VAULT_DOLL.getRegistryName());
         CUSTOM_SORTING.add(ModItems.VAULT_CATALYST_INFUSED.getRegistryName());
         CUSTOM_SORTING.add(ModItems.RELIC_FRAGMENT.getRegistryName());
-        CUSTOM_SORTING.add(ModItems.RESPEC_FLASK.getRegistryName());
+        CUSTOM_SORTING.add(RESPEC_FLASK);
         CUSTOM_SORTING.add(ModItems.FACETED_FOCUS.getRegistryName());
         CUSTOM_SORTING.add(ModItems.AUGMENT.getRegistryName());
 
